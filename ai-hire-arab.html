@@ -1,0 +1,1560 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Hire Arab – منصة التوظيف بالذكاء الاصطناعي</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;900&family=Tajawal:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --gold:#C9A84C;
+  --gold-light:#F0D080;
+  --gold-dim:#8A6A20;
+  --navy:#050B1A;
+  --navy2:#0A1628;
+  --navy3:#0F1E38;
+  --navy4:#162440;
+  --blue:#1A6EFF;
+  --blue-glow:rgba(26,110,255,0.35);
+  --cyan:#00D4FF;
+  --cyan-glow:rgba(0,212,255,0.2);
+  --text:#E8EAF0;
+  --text-dim:#8A9AB8;
+  --text-muted:#4A5A78;
+  --border:rgba(201,168,76,0.15);
+  --border2:rgba(26,110,255,0.2);
+}
+html{scroll-behavior:smooth}
+body{
+  font-family:'Cairo',sans-serif;
+  background:var(--navy);
+  color:var(--text);
+  overflow-x:hidden;
+  direction:rtl;
+}
+
+/* ─── SCROLLBAR ─── */
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:var(--navy2)}
+::-webkit-scrollbar-thumb{background:var(--gold-dim);border-radius:2px}
+
+/* ─── CANVAS ─── */
+#canvas3d{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;opacity:1}
+
+/* ─── NAV ─── */
+nav{
+  position:fixed;top:0;width:100%;z-index:1000;
+  padding:1rem 4rem;
+  display:flex;align-items:center;justify-content:space-between;
+  background:rgba(5,11,26,0.85);
+  backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+  transition:all 0.3s ease;
+}
+.nav-logo{display:flex;align-items:center;gap:0.75rem}
+.logo-icon{
+  width:44px;height:44px;border-radius:12px;
+  background:linear-gradient(135deg,var(--gold),var(--blue));
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.4rem;font-weight:900;color:#fff;
+  box-shadow:0 0 20px rgba(201,168,76,0.4);
+}
+.logo-text{font-size:1.3rem;font-weight:700;
+  background:linear-gradient(135deg,var(--gold-light),var(--cyan));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.nav-links{display:flex;gap:2rem;list-style:none}
+.nav-links a{
+  color:var(--text-dim);text-decoration:none;font-size:0.9rem;font-weight:500;
+  transition:color 0.3s;position:relative;
+}
+.nav-links a:hover{color:var(--gold-light)}
+.nav-links a::after{
+  content:'';position:absolute;bottom:-4px;right:0;
+  width:0;height:1px;background:var(--gold);
+  transition:width 0.3s;
+}
+.nav-links a:hover::after{width:100%}
+.nav-cta{
+  padding:0.6rem 1.5rem;border-radius:50px;
+  background:linear-gradient(135deg,var(--gold),#8A6A20);
+  color:#fff;border:none;cursor:pointer;font-family:'Cairo',sans-serif;
+  font-size:0.9rem;font-weight:600;
+  box-shadow:0 4px 20px rgba(201,168,76,0.3);
+  transition:all 0.3s ease;
+}
+.nav-cta:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(201,168,76,0.5)}
+
+/* ─── HERO ─── */
+#hero{
+  min-height:100vh;position:relative;z-index:1;
+  display:flex;align-items:center;justify-content:center;
+  text-align:center;padding:8rem 2rem 4rem;
+}
+.hero-glow{
+  position:absolute;top:20%;left:50%;transform:translateX(-50%);
+  width:800px;height:600px;
+  background:radial-gradient(ellipse,rgba(26,110,255,0.12) 0%,transparent 70%);
+  pointer-events:none;
+}
+.hero-badge{
+  display:inline-flex;align-items:center;gap:0.5rem;
+  padding:0.4rem 1.2rem;border-radius:50px;
+  border:1px solid rgba(201,168,76,0.4);
+  background:rgba(201,168,76,0.08);
+  color:var(--gold-light);font-size:0.8rem;font-weight:600;
+  margin-bottom:2rem;
+  animation:fadeUp 0.8s ease forwards;
+}
+.badge-dot{
+  width:6px;height:6px;border-radius:50%;
+  background:var(--gold);
+  animation:pulse 2s infinite;
+}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.5;transform:scale(1.5)}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.hero-title{
+  font-size:clamp(2.5rem,6vw,5rem);
+  font-weight:900;line-height:1.15;
+  margin-bottom:1.5rem;
+  animation:fadeUp 0.8s 0.2s ease both;
+}
+.title-line1{display:block;color:var(--text)}
+.title-gradient{
+  display:block;
+  background:linear-gradient(135deg,var(--gold-light) 0%,var(--cyan) 50%,var(--blue) 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.hero-sub{
+  font-size:1.15rem;color:var(--text-dim);max-width:600px;margin:0 auto 2.5rem;
+  line-height:1.8;font-weight:400;
+  animation:fadeUp 0.8s 0.4s ease both;
+}
+.hero-actions{
+  display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;
+  animation:fadeUp 0.8s 0.6s ease both;
+}
+.btn-primary{
+  padding:0.9rem 2.5rem;border-radius:50px;
+  background:linear-gradient(135deg,var(--gold),#A07020);
+  color:#fff;border:none;cursor:pointer;
+  font-family:'Cairo',sans-serif;font-size:1rem;font-weight:700;
+  box-shadow:0 6px 30px rgba(201,168,76,0.4);
+  transition:all 0.3s ease;text-decoration:none;display:inline-block;
+}
+.btn-primary:hover{transform:translateY(-3px);box-shadow:0 12px 40px rgba(201,168,76,0.6)}
+.btn-secondary{
+  padding:0.9rem 2.5rem;border-radius:50px;
+  background:transparent;
+  color:var(--text);border:1px solid rgba(255,255,255,0.2);
+  cursor:pointer;font-family:'Cairo',sans-serif;font-size:1rem;font-weight:600;
+  transition:all 0.3s ease;text-decoration:none;display:inline-block;
+  backdrop-filter:blur(10px);
+}
+.btn-secondary:hover{border-color:var(--cyan);color:var(--cyan);transform:translateY(-3px)}
+
+/* hero stats */
+.hero-stats{
+  display:flex;gap:3rem;justify-content:center;flex-wrap:wrap;
+  margin-top:4rem;padding-top:3rem;
+  border-top:1px solid var(--border);
+  animation:fadeUp 0.8s 0.8s ease both;
+}
+.stat-item{text-align:center}
+.stat-num{
+  font-size:2rem;font-weight:900;
+  background:linear-gradient(135deg,var(--gold-light),var(--cyan));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  display:block;
+}
+.stat-label{font-size:0.8rem;color:var(--text-muted);font-weight:500;margin-top:0.25rem}
+
+/* ─── SECTION SHARED ─── */
+section{position:relative;z-index:1;padding:5rem 4rem}
+.section-label{
+  display:inline-flex;align-items:center;gap:0.5rem;
+  color:var(--gold);font-size:0.8rem;font-weight:700;
+  letter-spacing:0.1em;text-transform:uppercase;
+  margin-bottom:1rem;
+}
+.section-title{
+  font-size:clamp(1.8rem,4vw,3rem);font-weight:900;
+  line-height:1.2;margin-bottom:1rem;
+}
+.section-title span{
+  background:linear-gradient(135deg,var(--gold-light),var(--cyan));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.section-sub{font-size:1rem;color:var(--text-dim);line-height:1.8;max-width:500px}
+
+/* ─── PROBLEM ─── */
+#problem{background:var(--navy2)}
+.problem-grid{
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:4rem;align-items:center;margin-top:3rem;
+}
+.problem-cards{display:flex;flex-direction:column;gap:1rem}
+.prob-card{
+  padding:1.25rem 1.5rem;border-radius:16px;
+  border:1px solid rgba(255,80,80,0.2);
+  background:rgba(255,80,80,0.05);
+  display:flex;align-items:flex-start;gap:1rem;
+  transition:all 0.3s ease;
+}
+.prob-card:hover{border-color:rgba(255,80,80,0.5);transform:translateX(-5px)}
+.prob-icon{
+  width:36px;height:36px;border-radius:10px;
+  background:rgba(255,80,80,0.15);
+  display:flex;align-items:center;justify-content:center;
+  font-size:1rem;flex-shrink:0;
+}
+.prob-text h4{font-size:0.95rem;font-weight:700;color:var(--text);margin-bottom:0.3rem}
+.prob-text p{font-size:0.85rem;color:var(--text-dim);line-height:1.6}
+
+.sol-cards{display:flex;flex-direction:column;gap:1rem}
+.sol-card{
+  padding:1.25rem 1.5rem;border-radius:16px;
+  border:1px solid rgba(0,212,255,0.2);
+  background:rgba(0,212,255,0.04);
+  display:flex;align-items:flex-start;gap:1rem;
+  transition:all 0.3s ease;
+}
+.sol-card:hover{border-color:rgba(0,212,255,0.5);transform:translateX(-5px)}
+.sol-icon{
+  width:36px;height:36px;border-radius:10px;
+  background:rgba(0,212,255,0.12);
+  display:flex;align-items:center;justify-content:center;
+  font-size:1rem;flex-shrink:0;
+}
+
+/* ─── HOW IT WORKS ─── */
+#how{background:var(--navy)}
+.how-container{max-width:1000px;margin:0 auto}
+.steps-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:2rem;margin-top:3rem;position:relative;
+}
+.steps-grid::before{
+  content:'';position:absolute;top:40px;right:calc(100%/6);
+  width:calc(100% * 2/3);height:1px;
+  background:linear-gradient(90deg,transparent,var(--gold-dim),transparent);
+  z-index:0;
+}
+.step-card{
+  padding:2rem;border-radius:20px;
+  border:1px solid var(--border);
+  background:linear-gradient(135deg,rgba(15,30,56,0.8),rgba(10,22,40,0.9));
+  text-align:center;position:relative;z-index:1;
+  transition:all 0.4s ease;
+  backdrop-filter:blur(10px);
+}
+.step-card:hover{
+  transform:translateY(-8px);
+  border-color:var(--gold-dim);
+  box-shadow:0 20px 60px rgba(201,168,76,0.15);
+}
+.step-num{
+  width:56px;height:56px;border-radius:50%;
+  background:linear-gradient(135deg,var(--gold),var(--gold-dim));
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.3rem;font-weight:900;color:#fff;
+  margin:0 auto 1.25rem;
+  box-shadow:0 0 20px rgba(201,168,76,0.4);
+}
+.step-title{font-size:1rem;font-weight:700;margin-bottom:0.5rem}
+.step-desc{font-size:0.85rem;color:var(--text-dim);line-height:1.7}
+
+/* ─── AI FEATURES ─── */
+#ai-features{background:var(--navy3)}
+.features-layout{
+  display:grid;grid-template-columns:1fr 1.2fr;
+  gap:5rem;align-items:center;margin-top:3rem;
+}
+.feature-list{display:flex;flex-direction:column;gap:1.5rem}
+.feat-item{
+  padding:1.5rem;border-radius:16px;
+  border:1px solid var(--border);
+  background:rgba(10,22,40,0.6);
+  cursor:pointer;transition:all 0.3s ease;
+  position:relative;overflow:hidden;
+}
+.feat-item.active,.feat-item:hover{
+  border-color:rgba(201,168,76,0.4);
+  background:rgba(201,168,76,0.06);
+}
+.feat-item::before{
+  content:'';position:absolute;right:0;top:0;bottom:0;
+  width:3px;background:linear-gradient(var(--gold),var(--cyan));
+  transform:scaleY(0);transition:transform 0.3s ease;
+}
+.feat-item.active::before,.feat-item:hover::before{transform:scaleY(1)}
+.feat-header{display:flex;align-items:center;gap:1rem;margin-bottom:0.5rem}
+.feat-icon{
+  width:40px;height:40px;border-radius:12px;
+  background:linear-gradient(135deg,rgba(201,168,76,0.2),rgba(26,110,255,0.2));
+  display:flex;align-items:center;justify-content:center;font-size:1.2rem;
+}
+.feat-title{font-size:1rem;font-weight:700}
+.feat-desc{font-size:0.85rem;color:var(--text-dim);line-height:1.7;padding-right:3.25rem}
+
+/* AI mockup */
+.ai-mockup{
+  background:var(--navy2);border-radius:24px;
+  border:1px solid var(--border);padding:1.5rem;
+  box-shadow:0 30px 80px rgba(0,0,0,0.5);
+  position:relative;overflow:hidden;
+}
+.ai-mockup::before{
+  content:'';position:absolute;top:-50%;right:-50%;
+  width:200%;height:200%;
+  background:radial-gradient(ellipse at 70% 30%,rgba(26,110,255,0.06),transparent 60%);
+  pointer-events:none;
+}
+.mockup-header{
+  display:flex;align-items:center;gap:0.75rem;
+  padding-bottom:1rem;border-bottom:1px solid var(--border);margin-bottom:1rem;
+}
+.mock-dots{display:flex;gap:5px}
+.mock-dots span{width:10px;height:10px;border-radius:50%}
+.mock-dots span:nth-child(1){background:#ff5f57}
+.mock-dots span:nth-child(2){background:#febc2e}
+.mock-dots span:nth-child(3){background:#28c840}
+.mock-title{font-size:0.8rem;color:var(--text-muted);flex:1;text-align:center}
+.cv-upload-area{
+  border:2px dashed rgba(201,168,76,0.3);border-radius:16px;
+  padding:2rem;text-align:center;margin-bottom:1rem;
+  background:rgba(201,168,76,0.03);
+  transition:all 0.3s;
+}
+.cv-upload-area:hover{border-color:var(--gold);background:rgba(201,168,76,0.07)}
+.upload-icon{font-size:2rem;margin-bottom:0.5rem;display:block}
+.upload-text{font-size:0.85rem;color:var(--text-dim)}
+.upload-btn{
+  display:inline-block;margin-top:0.75rem;padding:0.5rem 1.25rem;
+  border-radius:8px;background:rgba(201,168,76,0.15);
+  color:var(--gold-light);font-size:0.8rem;font-weight:600;border:none;
+  cursor:pointer;font-family:'Cairo',sans-serif;
+}
+.analysis-result{border-radius:16px;overflow:hidden}
+.result-header{
+  background:linear-gradient(135deg,rgba(201,168,76,0.15),rgba(26,110,255,0.1));
+  padding:0.75rem 1rem;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.result-label{font-size:0.8rem;font-weight:700;color:var(--gold-light)}
+.result-score{
+  font-size:1.4rem;font-weight:900;
+  background:linear-gradient(135deg,var(--gold-light),var(--cyan));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.result-bars{padding:1rem;background:rgba(10,22,40,0.7)}
+.bar-item{margin-bottom:0.75rem}
+.bar-label{
+  display:flex;justify-content:space-between;
+  font-size:0.75rem;color:var(--text-dim);margin-bottom:0.35rem;
+}
+.bar-track{height:6px;border-radius:3px;background:rgba(255,255,255,0.08)}
+.bar-fill{
+  height:100%;border-radius:3px;
+  background:linear-gradient(90deg,var(--blue),var(--cyan));
+  animation:barGrow 1.5s ease both;
+}
+@keyframes barGrow{from{width:0}to{width:var(--w)}}
+.bar-fill.gold{background:linear-gradient(90deg,var(--gold-dim),var(--gold-light))}
+
+/* ─── FOR WHO ─── */
+#for-who{background:var(--navy2)}
+.audience-grid{
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:2rem;margin-top:3rem;
+}
+.audience-card{
+  padding:2.5rem;border-radius:24px;
+  border:1px solid var(--border);
+  background:linear-gradient(135deg,rgba(15,30,56,0.8),rgba(10,22,40,0.95));
+  transition:all 0.4s ease;position:relative;overflow:hidden;
+}
+.audience-card:hover{transform:translateY(-5px);box-shadow:0 25px 60px rgba(0,0,0,0.4)}
+.audience-card.seeker{border-color:rgba(0,212,255,0.2)}
+.audience-card.seeker:hover{border-color:rgba(0,212,255,0.5);box-shadow:0 25px 60px rgba(0,212,255,0.1)}
+.audience-card.employer{border-color:rgba(201,168,76,0.2)}
+.audience-card.employer:hover{border-color:rgba(201,168,76,0.5);box-shadow:0 25px 60px rgba(201,168,76,0.1)}
+.aud-bg{
+  position:absolute;top:-40px;left:-40px;
+  width:180px;height:180px;border-radius:50%;
+  opacity:0.06;pointer-events:none;
+}
+.seeker .aud-bg{background:var(--cyan)}
+.employer .aud-bg{background:var(--gold)}
+.aud-tag{
+  display:inline-flex;align-items:center;gap:0.4rem;
+  padding:0.3rem 0.9rem;border-radius:50px;
+  font-size:0.75rem;font-weight:700;margin-bottom:1.5rem;
+}
+.seeker .aud-tag{background:rgba(0,212,255,0.1);color:var(--cyan);border:1px solid rgba(0,212,255,0.2)}
+.employer .aud-tag{background:rgba(201,168,76,0.1);color:var(--gold-light);border:1px solid rgba(201,168,76,0.25)}
+.aud-title{font-size:1.5rem;font-weight:900;margin-bottom:1rem}
+.aud-benefits{list-style:none;display:flex;flex-direction:column;gap:0.75rem;margin-bottom:2rem}
+.aud-benefits li{
+  display:flex;align-items:flex-start;gap:0.75rem;
+  font-size:0.9rem;color:var(--text-dim);line-height:1.5;
+}
+.aud-benefits li::before{
+  content:'✓';flex-shrink:0;width:20px;height:20px;
+  border-radius:50%;font-size:0.7rem;font-weight:900;
+  display:flex;align-items:center;justify-content:center;
+  margin-top:2px;
+}
+.seeker .aud-benefits li::before{background:rgba(0,212,255,0.15);color:var(--cyan)}
+.employer .aud-benefits li::before{background:rgba(201,168,76,0.15);color:var(--gold-light)}
+.aud-cta{
+  width:100%;padding:0.85rem;border-radius:12px;
+  font-family:'Cairo',sans-serif;font-size:0.9rem;font-weight:700;
+  cursor:pointer;border:none;transition:all 0.3s;
+}
+.seeker .aud-cta{background:rgba(0,212,255,0.12);color:var(--cyan);border:1px solid rgba(0,212,255,0.3)}
+.seeker .aud-cta:hover{background:rgba(0,212,255,0.25);transform:translateY(-2px)}
+.employer .aud-cta{background:linear-gradient(135deg,var(--gold),var(--gold-dim));color:#fff;box-shadow:0 4px 20px rgba(201,168,76,0.25)}
+.employer .aud-cta:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(201,168,76,0.4)}
+
+/* ─── PRICING ─── */
+#pricing{background:var(--navy)}
+.pricing-switch{
+  display:flex;align-items:center;gap:1rem;
+  justify-content:center;margin:2rem 0 3rem;
+}
+.switch-label{font-size:0.9rem;color:var(--text-dim);font-weight:500}
+.switch{position:relative;width:52px;height:28px}
+.switch input{opacity:0;width:0;height:0}
+.switch-slider{
+  position:absolute;inset:0;cursor:pointer;
+  background:rgba(255,255,255,0.1);border-radius:28px;
+  transition:0.4s;
+}
+.switch-slider::before{
+  content:'';position:absolute;height:20px;width:20px;
+  right:4px;bottom:4px;background:#fff;border-radius:50%;
+  transition:0.4s;
+}
+.switch input:checked+.switch-slider{background:var(--gold)}
+.switch input:checked+.switch-slider::before{transform:translateX(-24px)}
+.save-badge{
+  padding:0.25rem 0.7rem;border-radius:50px;
+  background:rgba(0,212,255,0.12);color:var(--cyan);
+  font-size:0.7rem;font-weight:700;border:1px solid rgba(0,212,255,0.2);
+}
+.pricing-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:1.5rem;max-width:960px;margin:0 auto;
+}
+.price-card{
+  padding:2rem;border-radius:24px;
+  border:1px solid var(--border);
+  background:linear-gradient(135deg,rgba(15,30,56,0.9),rgba(10,22,40,0.95));
+  text-align:center;position:relative;overflow:hidden;
+  transition:all 0.4s ease;
+}
+.price-card:hover{transform:translateY(-8px);box-shadow:0 30px 80px rgba(0,0,0,0.4)}
+.price-card.popular{
+  border-color:var(--gold-dim);
+  background:linear-gradient(135deg,rgba(201,168,76,0.08),rgba(15,30,56,0.95));
+  transform:scale(1.04);
+}
+.price-card.popular:hover{transform:scale(1.04) translateY(-8px)}
+.popular-tag{
+  position:absolute;top:-1px;left:50%;transform:translateX(-50%);
+  padding:0.35rem 1.25rem;border-radius:0 0 12px 12px;
+  background:linear-gradient(135deg,var(--gold),var(--gold-dim));
+  font-size:0.7rem;font-weight:700;color:#fff;
+  white-space:nowrap;
+}
+.plan-name{font-size:0.85rem;font-weight:700;color:var(--text-dim);margin-bottom:1rem;margin-top:0.5rem}
+.plan-price{
+  font-size:2.5rem;font-weight:900;
+  background:linear-gradient(135deg,var(--gold-light),var(--cyan));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.plan-price span{font-size:1rem;font-weight:400;color:var(--text-muted)}
+.plan-desc{font-size:0.8rem;color:var(--text-muted);margin:0.5rem 0 1.5rem}
+.plan-features{text-align:right;margin-bottom:2rem}
+.plan-features li{
+  display:flex;align-items:center;gap:0.75rem;
+  padding:0.4rem 0;font-size:0.85rem;color:var(--text-dim);
+  border-bottom:1px solid rgba(255,255,255,0.04);
+}
+.plan-features li:last-child{border:none}
+.check{color:var(--gold);font-size:0.8rem}
+.cross{color:var(--text-muted);font-size:0.8rem}
+.plan-btn{
+  width:100%;padding:0.8rem;border-radius:12px;
+  font-family:'Cairo',sans-serif;font-size:0.9rem;font-weight:700;
+  cursor:pointer;border:none;transition:all 0.3s;
+  background:rgba(255,255,255,0.06);color:var(--text);
+  border:1px solid rgba(255,255,255,0.1);
+}
+.plan-btn:hover{background:rgba(255,255,255,0.12);transform:translateY(-2px)}
+.price-card.popular .plan-btn{
+  background:linear-gradient(135deg,var(--gold),var(--gold-dim));
+  color:#fff;border:none;
+  box-shadow:0 6px 25px rgba(201,168,76,0.35);
+}
+.price-card.popular .plan-btn:hover{box-shadow:0 10px 40px rgba(201,168,76,0.5)}
+
+/* ─── COMPANIES ─── */
+#companies{
+  padding:3rem 4rem;background:var(--navy3);
+  border-top:1px solid var(--border);
+  border-bottom:1px solid var(--border);
+}
+.companies-inner{text-align:center}
+.companies-label{
+  font-size:0.8rem;color:var(--text-muted);font-weight:500;
+  letter-spacing:0.08em;text-transform:uppercase;margin-bottom:2rem;
+}
+.logos-track{
+  display:flex;align-items:center;justify-content:center;
+  gap:3rem;flex-wrap:wrap;
+}
+.company-logo{
+  padding:0.6rem 1.5rem;border-radius:10px;
+  background:rgba(255,255,255,0.04);
+  border:1px solid rgba(255,255,255,0.06);
+  color:var(--text-muted);font-weight:700;font-size:0.85rem;
+  letter-spacing:0.05em;transition:all 0.3s;
+}
+.company-logo:hover{color:var(--gold-light);border-color:rgba(201,168,76,0.25);background:rgba(201,168,76,0.05)}
+
+/* ─── ROADMAP ─── */
+#roadmap{background:var(--navy2)}
+.timeline{
+  position:relative;max-width:700px;margin:3rem auto 0;
+  padding-right:2rem;
+}
+.timeline::before{
+  content:'';position:absolute;right:0;top:0;bottom:0;
+  width:2px;background:linear-gradient(var(--navy3),var(--gold-dim),var(--cyan),var(--navy3));
+}
+.tl-item{
+  position:relative;padding-right:2.5rem;margin-bottom:2.5rem;
+}
+.tl-item::before{
+  content:'';position:absolute;right:-6px;top:8px;
+  width:14px;height:14px;border-radius:50%;
+  background:linear-gradient(135deg,var(--gold),var(--cyan));
+  box-shadow:0 0 15px rgba(201,168,76,0.5);
+  z-index:1;
+}
+.tl-phase{font-size:0.75rem;font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:0.35rem}
+.tl-title{font-size:1.05rem;font-weight:700;margin-bottom:0.35rem}
+.tl-desc{font-size:0.85rem;color:var(--text-dim);line-height:1.6}
+.tl-date{
+  display:inline-block;margin-top:0.5rem;padding:0.2rem 0.7rem;
+  border-radius:50px;background:rgba(255,255,255,0.05);
+  font-size:0.75rem;color:var(--text-muted);border:1px solid rgba(255,255,255,0.08);
+}
+
+/* ─── TESTIMONIALS ─── */
+#testimonials{background:var(--navy)}
+.test-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:1.5rem;margin-top:3rem;
+}
+.test-card{
+  padding:1.75rem;border-radius:20px;
+  border:1px solid var(--border);
+  background:linear-gradient(135deg,rgba(15,30,56,0.8),rgba(10,22,40,0.9));
+  transition:all 0.3s ease;
+}
+.test-card:hover{transform:translateY(-5px);border-color:rgba(201,168,76,0.3)}
+.stars{color:var(--gold);font-size:0.85rem;margin-bottom:0.75rem;letter-spacing:2px}
+.test-text{font-size:0.9rem;color:var(--text-dim);line-height:1.7;margin-bottom:1.25rem;font-style:italic}
+.test-author{display:flex;align-items:center;gap:0.75rem}
+.author-avatar{
+  width:40px;height:40px;border-radius:50%;
+  background:linear-gradient(135deg,var(--gold-dim),var(--blue));
+  display:flex;align-items:center;justify-content:center;
+  font-size:0.85rem;font-weight:700;color:#fff;
+}
+.author-name{font-size:0.85rem;font-weight:700}
+.author-role{font-size:0.75rem;color:var(--text-muted)}
+
+/* ─── STATS TICKER ─── */
+#stats-ticker{
+  background:linear-gradient(90deg,var(--navy3),var(--navy4),var(--navy3));
+  padding:3rem 4rem;overflow:hidden;
+  border-top:1px solid var(--border);
+}
+.ticker-grid{
+  display:grid;grid-template-columns:repeat(4,1fr);
+  gap:2rem;text-align:center;
+}
+.ticker-item{}
+.ticker-num{
+  font-size:2.5rem;font-weight:900;display:block;
+  background:linear-gradient(135deg,var(--gold-light),var(--cyan));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.ticker-label{font-size:0.8rem;color:var(--text-muted);margin-top:0.25rem}
+
+/* ─── CTA ─── */
+#cta{
+  background:linear-gradient(135deg,rgba(26,110,255,0.1),rgba(201,168,76,0.08),rgba(0,212,255,0.05));
+  text-align:center;padding:6rem 4rem;
+  position:relative;overflow:hidden;
+}
+#cta::before{
+  content:'';position:absolute;top:50%;left:50%;
+  transform:translate(-50%,-50%);
+  width:600px;height:400px;
+  background:radial-gradient(ellipse,rgba(201,168,76,0.1),transparent 70%);
+  pointer-events:none;
+}
+.cta-title{
+  font-size:clamp(2rem,5vw,3.5rem);font-weight:900;
+  margin-bottom:1rem;line-height:1.2;
+}
+.cta-sub{
+  font-size:1.1rem;color:var(--text-dim);
+  margin-bottom:2.5rem;max-width:600px;margin-left:auto;margin-right:auto;
+  line-height:1.8;
+}
+.cta-actions{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap}
+.cta-form{
+  display:flex;gap:0.75rem;max-width:440px;
+  margin:2rem auto 0;
+}
+.email-input{
+  flex:1;padding:0.85rem 1.25rem;border-radius:12px;
+  background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);
+  color:var(--text);font-family:'Cairo',sans-serif;font-size:0.9rem;
+  direction:rtl;text-align:right;outline:none;transition:border 0.3s;
+}
+.email-input:focus{border-color:var(--gold)}
+.email-input::placeholder{color:var(--text-muted)}
+.email-btn{
+  padding:0.85rem 1.5rem;border-radius:12px;
+  background:linear-gradient(135deg,var(--gold),var(--gold-dim));
+  color:#fff;border:none;cursor:pointer;
+  font-family:'Cairo',sans-serif;font-size:0.9rem;font-weight:700;
+  white-space:nowrap;transition:all 0.3s;
+}
+.email-btn:hover{transform:translateY(-2px);box-shadow:0 6px 25px rgba(201,168,76,0.4)}
+
+/* ─── FOOTER ─── */
+footer{
+  background:var(--navy2);padding:4rem 4rem 2rem;
+  border-top:1px solid var(--border);
+}
+.footer-grid{
+  display:grid;grid-template-columns:2fr 1fr 1fr 1fr;
+  gap:3rem;margin-bottom:3rem;
+}
+.footer-brand .logo-text{font-size:1.5rem;margin-bottom:0.75rem;display:block}
+.footer-tagline{font-size:0.85rem;color:var(--text-muted);line-height:1.7;max-width:240px}
+.footer-heading{font-size:0.85rem;font-weight:700;color:var(--text);margin-bottom:1rem;text-transform:uppercase;letter-spacing:0.08em}
+.footer-links{list-style:none;display:flex;flex-direction:column;gap:0.5rem}
+.footer-links a{font-size:0.85rem;color:var(--text-muted);text-decoration:none;transition:color 0.3s}
+.footer-links a:hover{color:var(--gold-light)}
+.footer-bottom{
+  display:flex;align-items:center;justify-content:space-between;
+  padding-top:2rem;border-top:1px solid var(--border);
+  font-size:0.8rem;color:var(--text-muted);
+}
+.social-links{display:flex;gap:0.75rem}
+.social-btn{
+  width:36px;height:36px;border-radius:10px;
+  background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;transition:all 0.3s;text-decoration:none;
+  color:var(--text-muted);font-size:0.8rem;font-weight:700;
+}
+.social-btn:hover{background:rgba(201,168,76,0.12);border-color:rgba(201,168,76,0.3);color:var(--gold-light)}
+
+/* ─── SCROLL ANIMATIONS ─── */
+.reveal{opacity:0;transform:translateY(40px);transition:all 0.7s ease}
+.reveal.visible{opacity:1;transform:translateY(0)}
+
+/* ─── RESPONSIVE ─── */
+@media(max-width:900px){
+  nav{padding:1rem 1.5rem}
+  .nav-links{display:none}
+  section{padding:4rem 1.5rem}
+  .problem-grid,.features-layout,.audience-grid,.pricing-grid,.test-grid,.footer-grid{grid-template-columns:1fr}
+  .steps-grid{grid-template-columns:1fr}
+  .steps-grid::before{display:none}
+  .price-card.popular{transform:none}
+  .ticker-grid{grid-template-columns:repeat(2,1fr)}
+  .hero-stats{gap:2rem}
+  footer{padding:3rem 1.5rem 2rem}
+  #companies{padding:3rem 1.5rem}
+}
+
+/* ─── CUSTOM CURSOR ─── */
+.cursor{
+  width:20px;height:20px;border-radius:50%;
+  border:1.5px solid rgba(201,168,76,0.6);
+  position:fixed;pointer-events:none;z-index:9999;
+  transform:translate(-50%,-50%);
+  transition:all 0.1s ease;mix-blend-mode:difference;
+}
+.cursor-dot{
+  width:5px;height:5px;border-radius:50%;
+  background:var(--gold);
+  position:fixed;pointer-events:none;z-index:9999;
+  transform:translate(-50%,-50%);
+}
+
+/* ─── FLOATING ELEMENTS ─── */
+.float-card{
+  position:absolute;background:rgba(10,22,40,0.95);
+  border:1px solid var(--border);border-radius:16px;
+  padding:0.75rem 1rem;backdrop-filter:blur(20px);
+  box-shadow:0 20px 60px rgba(0,0,0,0.5);
+  animation:floatCard 4s ease-in-out infinite;
+  font-size:0.8rem;
+}
+@keyframes floatCard{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+.float-1{top:20%;right:5%;animation-delay:0s}
+.float-2{bottom:25%;left:5%;animation-delay:2s}
+.float-badge-ai{display:flex;align-items:center;gap:0.5rem}
+.float-badge-ai .ai-dot{width:8px;height:8px;border-radius:50%;background:var(--cyan);animation:pulse 1.5s infinite}
+</style>
+</head>
+<body>
+
+<!-- Custom Cursor -->
+<div class="cursor" id="cursor"></div>
+<div class="cursor-dot" id="cursorDot"></div>
+
+<!-- 3D Canvas -->
+<canvas id="canvas3d"></canvas>
+
+<!-- ═══ NAVIGATION ═══ -->
+<nav id="mainNav">
+  <div class="nav-logo">
+    <div class="logo-icon">AI</div>
+    <span class="logo-text">AI Hire Arab</span>
+  </div>
+  <ul class="nav-links">
+    <li><a href="#how">كيف تعمل</a></li>
+    <li><a href="#ai-features">مميزات الذكاء الاصطناعي</a></li>
+    <li><a href="#for-who">لمن هي</a></li>
+    <li><a href="#pricing">الأسعار</a></li>
+    <li><a href="#roadmap">خارطة الطريق</a></li>
+  </ul>
+  <button class="nav-cta">ابدأ مجاناً</button>
+</nav>
+
+<!-- ═══ HERO ═══ -->
+<section id="hero">
+  <div class="hero-glow"></div>
+
+  <!-- floating cards -->
+  <div class="float-card float-1">
+    <div class="float-badge-ai">
+      <span class="ai-dot"></span>
+      <span style="color:var(--cyan);font-weight:700">تحليل AI</span>
+    </div>
+    <div style="margin-top:0.35rem;color:var(--text-dim)">نسبة تطابق الوظيفة</div>
+    <div style="font-size:1.5rem;font-weight:900;color:var(--gold-light)">94%</div>
+  </div>
+  <div class="float-card float-2" style="animation-delay:2s">
+    <div style="color:var(--text-muted);font-size:0.75rem;margin-bottom:0.35rem">تم إيجاد وظيفة</div>
+    <div style="display:flex;align-items:center;gap:0.5rem">
+      <div style="width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--gold-dim),var(--blue));display:flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:700;color:#fff">أح</div>
+      <div>
+        <div style="font-weight:700;font-size:0.8rem">أحمد محمد</div>
+        <div style="color:var(--gold);font-size:0.7rem">مطوّر Full-Stack ✓</div>
+      </div>
+    </div>
+  </div>
+
+  <div style="position:relative;z-index:2;max-width:850px">
+    <div class="hero-badge">
+      <span class="badge-dot"></span>
+      منصة التوظيف الذكي العربية #1
+    </div>
+
+    <h1 class="hero-title">
+      <span class="title-line1">وظيفتك المثالية</span>
+      <span class="title-gradient">بقوة الذكاء الاصطناعي</span>
+    </h1>
+
+    <p class="hero-sub">
+      منصة توظيف عربية ذكية تحلل سيرتك الذاتية، تطابقك مع الوظائف المناسبة،
+      وتوفر على الشركات 80% من وقت الفرز — كل ذلك بالعربية بالكامل
+    </p>
+
+    <div class="hero-actions">
+      <a href="#cta" class="btn-primary">ابدأ مجاناً الآن ← </a>
+      <a href="#how" class="btn-secondary">▶ شاهد كيف تعمل</a>
+    </div>
+
+    <div class="hero-stats">
+      <div class="stat-item">
+        <span class="stat-num" data-count="25000">0</span>
+        <div class="stat-label">باحث عن عمل</div>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num" data-count="500">0</span>
+        <div class="stat-label">شركة موثوقة</div>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num" data-count="94">0</span>
+        <div class="stat-label">% دقة المطابقة</div>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num" data-count="80">0</span>
+        <div class="stat-label">% توفير في وقت HR</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ PROBLEM / SOLUTION ═══ -->
+<section id="problem">
+  <div class="problem-grid reveal">
+    <div>
+      <div class="section-label">⚠ المشكلة الحالية</div>
+      <h2 class="section-title">سوق التوظيف<br><span>مكسور</span></h2>
+      <p class="section-sub">نسبة بطالة الشباب العربي تتجاوز 30% رغم توفر الوظائف. الأنظمة القديمة لا تخدم السوق العربي.</p>
+      <div class="problem-cards" style="margin-top:1.5rem">
+        <div class="prob-card">
+          <div class="prob-icon">⏳</div>
+          <div class="prob-text">
+            <h4>أشهر من الانتظار</h4>
+            <p>الباحثون يُرسلون مئات الطلبات دون ردود، يضيعون أشهراً بلا نتيجة</p>
+          </div>
+        </div>
+        <div class="prob-card">
+          <div class="prob-icon">🌍</div>
+          <div class="prob-text">
+            <h4>لا يوجد حل عربي متخصص</h4>
+            <p>LinkedIn إنجليزي، بعيد.com قديم، لا أحد يستخدم ذكاء اصطناعي فعلياً</p>
+          </div>
+        </div>
+        <div class="prob-card">
+          <div class="prob-icon">📄</div>
+          <div class="prob-text">
+            <h4>فرز يدوي مُضيّع للوقت</h4>
+            <p>الشركات تستغرق أسابيع لفرز آلاف السير الذاتية يدوياً</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="section-label" style="color:var(--cyan)">✨ الحل</div>
+      <h2 class="section-title" style="margin-bottom:1rem">الذكاء الاصطناعي<br><span>يحل المشكلة</span></h2>
+      <p class="section-sub">نستخدم أحدث تقنيات Claude AI و OpenAI Embeddings لثورة حقيقية في التوظيف العربي</p>
+      <div class="sol-cards" style="margin-top:1.5rem">
+        <div class="sol-card">
+          <div class="sol-icon">🧠</div>
+          <div class="prob-text">
+            <h4>تحليل ذكي للسيرة الذاتية</h4>
+            <p>Claude API يحلل CV بالعربية ويعطيك تقريراً مفصلاً فورياً</p>
+          </div>
+        </div>
+        <div class="sol-card">
+          <div class="sol-icon">🎯</div>
+          <div class="prob-text">
+            <h4>مطابقة ذكية بالـ Embeddings</h4>
+            <p>تطابق حقيقي بين المرشح والوظيفة بدون الاعتماد على الكلمات المفتاحية فقط</p>
+          </div>
+        </div>
+        <div class="sol-card">
+          <div class="sol-icon">⚡</div>
+          <div class="prob-text">
+            <h4>تصنيف تلقائي للمتقدمين</h4>
+            <p>الشركة ترى قائمة مرتبة مع نقاط ومبررات — في ثوانٍ لا أسابيع</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ HOW IT WORKS ═══ -->
+<section id="how">
+  <div class="how-container">
+    <div style="text-align:center;margin-bottom:0.5rem">
+      <div class="section-label" style="justify-content:center">كيف تعمل المنصة</div>
+      <h2 class="section-title" style="text-align:center">ثلاث خطوات <span>نحو وظيفتك</span></h2>
+    </div>
+    <div class="steps-grid reveal">
+      <div class="step-card">
+        <div class="step-num">١</div>
+        <h3 class="step-title">ارفع سيرتك الذاتية</h3>
+        <p class="step-desc">ارفع ملف PDF أو Word وسيقوم الذكاء الاصطناعي بتحليله فورياً وإنشاء ملفك المهني</p>
+      </div>
+      <div class="step-card" style="animation-delay:0.2s">
+        <div class="step-num">٢</div>
+        <h3 class="step-title">احصل على تقييم AI</h3>
+        <p class="step-desc">Claude يحلل نقاط قوتك وضعفك ويعطيك نسبة الجاهزية مع اقتراحات تحسين مخصصة</p>
+      </div>
+      <div class="step-card" style="animation-delay:0.4s">
+        <div class="step-num">٣</div>
+        <h3 class="step-title">تقدّم بذكاء واحصل على الوظيفة</h3>
+        <p class="step-desc">اكتشف الوظائف المطابقة وقدّم بنقرة واحدة مع رسالة تقديم ذكية تُكتب تلقائياً</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ AI FEATURES ═══ -->
+<section id="ai-features">
+  <div class="features-layout reveal">
+    <div>
+      <div class="section-label">قلب المنصة</div>
+      <h2 class="section-title">ذكاء اصطناعي<br><span>متكامل في كل خطوة</span></h2>
+      <p class="section-sub" style="margin-bottom:2rem">كل ميزة مدعومة بأحدث تقنيات Claude API و OpenAI Embeddings</p>
+      <div class="feature-list">
+        <div class="feat-item active">
+          <div class="feat-header">
+            <div class="feat-icon">📊</div>
+            <h4 class="feat-title">تحليل السيرة الذاتية بـ Claude</h4>
+          </div>
+          <p class="feat-desc">تحليل شامل لـ CV بالعربية مع نقاط القوة والضعف والتوصيات — يصدر خلال 30 ثانية</p>
+        </div>
+        <div class="feat-item">
+          <div class="feat-header">
+            <div class="feat-icon">🔍</div>
+            <h4 class="feat-title">مطابقة ذكية بالـ Embeddings</h4>
+          </div>
+          <p class="feat-desc">تحويل كل CV ووصف وظيفة لبيانات رقمية ومقارنتها رياضياً — دقة حقيقية لا كلمات مفتاحية</p>
+        </div>
+        <div class="feat-item">
+          <div class="feat-header">
+            <div class="feat-icon">🏆</div>
+            <h4 class="feat-title">تصنيف المتقدمين للشركات</h4>
+          </div>
+          <p class="feat-desc">كل CV يصل للشركة يحصل على نقاط من 100 مع مبرر مختصر — قائمة مرتبة تلقائياً</p>
+        </div>
+        <div class="feat-item">
+          <div class="feat-header">
+            <div class="feat-icon">✍️</div>
+            <h4 class="feat-title">رسائل تقديم بالذكاء الاصطناعي</h4>
+          </div>
+          <p class="feat-desc">تُكتب رسالة تقديم شخصية لكل وظيفة تلقائياً تناسب متطلباتها وخلفيتك المهنية</p>
+        </div>
+      </div>
+    </div>
+    <!-- AI Mockup -->
+    <div class="ai-mockup">
+      <div class="mockup-header">
+        <div class="mock-dots">
+          <span></span><span></span><span></span>
+        </div>
+        <div class="mock-title">AI Hire Arab — تحليل السيرة الذاتية</div>
+      </div>
+      <div class="cv-upload-area" id="uploadArea">
+        <span class="upload-icon">📄</span>
+        <div class="upload-text">اسحب وأفلت ملف CV هنا</div>
+        <div class="upload-text" style="font-size:0.75rem;margin-top:0.25rem;color:var(--text-muted)">PDF أو Word — حتى 10 MB</div>
+        <button class="upload-btn" onclick="showAnalysis()">تحليل بالذكاء الاصطناعي ⚡</button>
+      </div>
+      <div class="analysis-result" id="analysisResult" style="display:none">
+        <div class="result-header">
+          <span class="result-label">🧠 تقرير تحليل AI</span>
+          <span class="result-score">87/100</span>
+        </div>
+        <div class="result-bars">
+          <div class="bar-item">
+            <div class="bar-label"><span>المهارات التقنية</span><span style="color:var(--cyan)">91%</span></div>
+            <div class="bar-track"><div class="bar-fill" style="--w:91%"></div></div>
+          </div>
+          <div class="bar-item">
+            <div class="bar-label"><span>الخبرة المهنية</span><span style="color:var(--cyan)">85%</span></div>
+            <div class="bar-track"><div class="bar-fill" style="--w:85%"></div></div>
+          </div>
+          <div class="bar-item">
+            <div class="bar-label"><span>التعليم والشهادات</span><span style="color:var(--gold-light)">78%</span></div>
+            <div class="bar-track"><div class="bar-fill gold" style="--w:78%"></div></div>
+          </div>
+          <div class="bar-item">
+            <div class="bar-label"><span>وضوح وتنظيم الـ CV</span><span style="color:var(--gold-light)">94%</span></div>
+            <div class="bar-track"><div class="bar-fill gold" style="--w:94%"></div></div>
+          </div>
+          <div style="margin-top:1rem;padding-top:1rem;border-top:1px solid rgba(255,255,255,0.06)">
+            <div style="font-size:0.75rem;color:var(--text-muted);margin-bottom:0.5rem">💡 توصيات التحسين:</div>
+            <div style="font-size:0.8rem;color:var(--text-dim);display:flex;flex-direction:column;gap:0.35rem">
+              <span>• أضف مشاريع GitHub لتعزيز ملفك التقني</span>
+              <span>• اذكر الإنجازات بأرقام وليس بعبارات مبهمة</span>
+              <span>• أضف شهادة احترافية في مجالك</span>
+            </div>
+          </div>
+          <div style="margin-top:1rem;display:flex;gap:0.5rem">
+            <div style="flex:1;background:rgba(0,212,255,0.08);border:1px solid rgba(0,212,255,0.2);border-radius:8px;padding:0.5rem;text-align:center">
+              <div style="font-size:0.7rem;color:var(--text-muted)">وظائف مطابقة</div>
+              <div style="font-size:1.2rem;font-weight:900;color:var(--cyan)">47</div>
+            </div>
+            <div style="flex:1;background:rgba(201,168,76,0.08);border:1px solid rgba(201,168,76,0.2);border-radius:8px;padding:0.5rem;text-align:center">
+              <div style="font-size:0.7rem;color:var(--text-muted)">أفضل تطابق</div>
+              <div style="font-size:1.2rem;font-weight:900;color:var(--gold-light)">96%</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ FOR WHO ═══ -->
+<section id="for-who">
+  <div style="text-align:center;margin-bottom:0.5rem">
+    <div class="section-label" style="justify-content:center">المستخدمون</div>
+    <h2 class="section-title" style="text-align:center">منصة واحدة <span>لطرفي المعادلة</span></h2>
+  </div>
+  <div class="audience-grid reveal">
+    <div class="audience-card seeker">
+      <div class="aud-bg"></div>
+      <div class="aud-tag">👨‍💼 للباحثين عن عمل</div>
+      <h3 class="aud-title">ابحث بذكاء،<br>وصل أسرع</h3>
+      <ul class="aud-benefits">
+        <li>تحليل مجاني لسيرتك الذاتية مع تقرير مفصل</li>
+        <li>مطابقة ذكية مع الوظائف التي تناسبك فعلاً</li>
+        <li>رسائل تقديم مخصصة تُكتب تلقائياً لكل وظيفة</li>
+        <li>تتبع حالة طلباتك في مكان واحد</li>
+        <li>محاكاة مقابلات ذكية لتحضيرك (بريميوم)</li>
+        <li>تنبيهات فورية عند نشر وظائف تطابقك</li>
+      </ul>
+      <button class="aud-cta">ابحث عن وظيفة مجاناً ←</button>
+    </div>
+    <div class="audience-card employer">
+      <div class="aud-bg"></div>
+      <div class="aud-tag">🏢 للشركات والمستخدِمين</div>
+      <h3 class="aud-title">وظّف الأفضل،<br>بوقت أقل</h3>
+      <ul class="aud-benefits">
+        <li>انشر وظائفك وصلها لآلاف الباحثين المؤهلين</li>
+        <li>قائمة مرتبة بالمتقدمين مع نقاط ومبررات AI</li>
+        <li>وفّر 80% من وقت فريق HR في الفرز</li>
+        <li>لوحة تحليلات متقدمة لكل حملة توظيف</li>
+        <li>تواصل مباشر مع المرشحين من المنصة</li>
+        <li>تقييم تلقائي لجودة وصف الوظيفة قبل النشر</li>
+      </ul>
+      <button class="aud-cta">انضم كشركة واحصل على شهر مجاني</button>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ STATS TICKER ═══ -->
+<div id="stats-ticker">
+  <div class="ticker-grid">
+    <div class="ticker-item reveal">
+      <span class="ticker-num">+30%</span>
+      <div class="ticker-label">بطالة الشباب العربي</div>
+    </div>
+    <div class="ticker-item reveal">
+      <span class="ticker-num">80%</span>
+      <div class="ticker-label">توفير في وقت HR</div>
+    </div>
+    <div class="ticker-item reveal">
+      <span class="ticker-num">30 ث</span>
+      <div class="ticker-label">تحليل AI للسيرة الذاتية</div>
+    </div>
+    <div class="ticker-item reveal">
+      <span class="ticker-num">5 دول</span>
+      <div class="ticker-label">مصر، العراق، المغرب، الجزائر، تونس</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ PRICING ═══ -->
+<section id="pricing">
+  <div style="text-align:center">
+    <div class="section-label" style="justify-content:center">الأسعار</div>
+    <h2 class="section-title" style="text-align:center">خطط تناسب <span>الجميع</span></h2>
+    <p style="color:var(--text-dim);font-size:0.95rem;margin-top:0.5rem">للباحثين عن عمل — بدّل للشركات أدناه</p>
+  </div>
+  <div class="pricing-switch">
+    <span class="switch-label" style="color:var(--text)">باحثون عن عمل</span>
+    <label class="switch">
+      <input type="checkbox" id="pricingToggle" onchange="togglePricing(this)">
+      <span class="switch-slider"></span>
+    </label>
+    <span class="switch-label">شركات</span>
+    <span class="save-badge">شهر مجاني</span>
+  </div>
+  <div class="pricing-grid reveal" id="pricingGrid">
+    <!-- Seeker plans -->
+    <div class="price-card" id="plan1">
+      <div class="plan-name">مجاني دائماً</div>
+      <div class="plan-price">$0<span>/شهر</span></div>
+      <div class="plan-desc">ابدأ واكتشف المنصة</div>
+      <ul class="plan-features">
+        <li><span class="check">✓</span> 3 طلبات تقديم شهرياً</li>
+        <li><span class="check">✓</span> تحليل AI للـ CV مرة واحدة</li>
+        <li><span class="check">✓</span> بحث عن الوظائف</li>
+        <li><span class="cross">✗</span> رسائل تقديم بـ AI</li>
+        <li><span class="cross">✗</span> محاكاة المقابلات</li>
+        <li><span class="cross">✗</span> تنبيهات ذكية</li>
+      </ul>
+      <button class="plan-btn">ابدأ مجاناً</button>
+    </div>
+    <div class="price-card popular" id="plan2">
+      <div class="popular-tag">⭐ الأكثر شيوعاً</div>
+      <div class="plan-name">أساسي</div>
+      <div class="plan-price">$9<span>/شهر</span></div>
+      <div class="plan-desc">للباحث الجاد</div>
+      <ul class="plan-features">
+        <li><span class="check">✓</span> تقديم غير محدود</li>
+        <li><span class="check">✓</span> تحليل AI شهري</li>
+        <li><span class="check">✓</span> رسائل تقديم بـ AI</li>
+        <li><span class="check">✓</span> تنبيهات وظائف ذكية</li>
+        <li><span class="cross">✗</span> محاكاة المقابلات</li>
+        <li><span class="cross">✗</span> التقديم المجهول</li>
+      </ul>
+      <button class="plan-btn">اشترك الآن</button>
+    </div>
+    <div class="price-card" id="plan3">
+      <div class="plan-name">بريميوم</div>
+      <div class="plan-price">$19<span>/شهر</span></div>
+      <div class="plan-desc">للنخبة المحترفة</div>
+      <ul class="plan-features">
+        <li><span class="check">✓</span> كل مزايا الأساسي</li>
+        <li><span class="check">✓</span> تحليل AI أسبوعي</li>
+        <li><span class="check">✓</span> محاكاة مقابلات بـ AI</li>
+        <li><span class="check">✓</span> التقديم بهوية مجهولة</li>
+        <li><span class="check">✓</span> دعم Chat مباشر 24/7</li>
+        <li><span class="check">✓</span> مسار تطوير المهارات</li>
+      </ul>
+      <button class="plan-btn">ابدأ تجربة مجانية</button>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ COMPANIES LOGOS ═══ -->
+<div id="companies">
+  <div class="companies-inner">
+    <div class="companies-label">شركات تثق في منصتنا للتوظيف</div>
+    <div class="logos-track">
+      <div class="company-logo">شركة بيانات</div>
+      <div class="company-logo">تيك ميدل إيست</div>
+      <div class="company-logo">رواد المال</div>
+      <div class="company-logo">نيل ديجيتال</div>
+      <div class="company-logo">حلول ذكية</div>
+      <div class="company-logo">عرب ديف</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ ROADMAP ═══ -->
+<section id="roadmap">
+  <div style="text-align:center;margin-bottom:0.5rem">
+    <div class="section-label" style="justify-content:center">خارطة الطريق</div>
+    <h2 class="section-title" style="text-align:center">خطتنا <span>للـ 16 أسبوعاً القادمة</span></h2>
+  </div>
+  <div class="timeline">
+    <div class="tl-item reveal">
+      <div class="tl-phase">المرحلة ١</div>
+      <div class="tl-title">التحقق من الفكرة</div>
+      <div class="tl-desc">20 مقابلة مع الشريحة المستهدفة + جمع 200 إيميل في قائمة الانتظار قبل كتابة سطر كود</div>
+      <span class="tl-date">الأسبوع 1 – 2</span>
+    </div>
+    <div class="tl-item reveal">
+      <div class="tl-phase">المرحلة ٢</div>
+      <div class="tl-title">التصميم والتخطيط</div>
+      <div class="tl-desc">تحديد MVP الكامل + تصميم Figma لجميع الشاشات + اختبار مع 5 مستخدمين حقيقيين</div>
+      <span class="tl-date">الأسبوع 3 – 4</span>
+    </div>
+    <div class="tl-item reveal">
+      <div class="tl-phase">المرحلة ٣</div>
+      <div class="tl-title">البناء التقني</div>
+      <div class="tl-desc">Next.js + FastAPI + Supabase + Claude API + Pinecone Embeddings — بناء كل الميزات الجوهرية</div>
+      <span class="tl-date">الأسبوع 5 – 11</span>
+    </div>
+    <div class="tl-item reveal">
+      <div class="tl-phase">المرحلة ٤</div>
+      <div class="tl-title">اختبار Beta</div>
+      <div class="tl-desc">20 باحث عن عمل + 5 شركات يختبرون لأسبوعين مع جمع 50 ملاحظة مكتوبة على الأقل</div>
+      <span class="tl-date">الأسبوع 12 – 13</span>
+    </div>
+    <div class="tl-item reveal">
+      <div class="tl-phase">المرحلة ٥</div>
+      <div class="tl-title">الإطلاق والنمو</div>
+      <div class="tl-desc">Soft launch لقائمة الانتظار ← Product Hunt ← حملة تسويق ← 10 شركات أولى</div>
+      <span class="tl-date">الأسبوع 14 – 16</span>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ TESTIMONIALS ═══ -->
+<section id="testimonials">
+  <div style="text-align:center;margin-bottom:0.5rem">
+    <div class="section-label" style="justify-content:center">ماذا يقولون</div>
+    <h2 class="section-title" style="text-align:center">قصص <span>نجاح حقيقية</span></h2>
+  </div>
+  <div class="test-grid reveal">
+    <div class="test-card">
+      <div class="stars">★★★★★</div>
+      <p class="test-text">"كنت أُرسل 50 طلب شهرياً بلا رد. بعد تحليل AI الـ CV، أصبحت أُرسل 10 طلبات مدروسة وحصلت على 3 مقابلات في أسبوع واحد!"</p>
+      <div class="test-author">
+        <div class="author-avatar">أح</div>
+        <div>
+          <div class="author-name">أحمد محمود</div>
+          <div class="author-role">مطوّر Frontend — القاهرة</div>
+        </div>
+      </div>
+    </div>
+    <div class="test-card">
+      <div class="stars">★★★★★</div>
+      <p class="test-text">"وفّرنا 70% من وقت HR في الفرز. الـ AI يعطينا قائمة مرتبة مع تفسير لكل مرشح. أصبح التوظيف ممتعاً لا مُضنياً."</p>
+      <div class="test-author">
+        <div class="author-avatar">سل</div>
+        <div>
+          <div class="author-name">سلمى عبدالله</div>
+          <div class="author-role">مديرة HR — شركة تقنية بغداد</div>
+        </div>
+      </div>
+    </div>
+    <div class="test-card">
+      <div class="stars">★★★★★</div>
+      <p class="test-text">"المنصة فهمت ملفي المهني بدقة رائعة. اقترحت عليّ وظائف لم أكن لأفكر فيها، واتضح أنها مثالية لخلفيتي التقنية."</p>
+      <div class="test-author">
+        <div class="author-avatar">ري</div>
+        <div>
+          <div class="author-name">ريم الحسن</div>
+          <div class="author-role">مهندسة بيانات — الرباط</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ CTA ═══ -->
+<section id="cta">
+  <div style="position:relative;z-index:1">
+    <div class="section-label" style="justify-content:center">ابدأ الآن</div>
+    <h2 class="cta-title">
+      وظيفتك المثالية<br>
+      <span style="background:linear-gradient(135deg,var(--gold-light),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">تنتظرك الآن</span>
+    </h2>
+    <p class="cta-sub">انضم لآلاف الباحثين والشركات الذين غيّروا طريقة توظيفهم بقوة الذكاء الاصطناعي</p>
+    <div class="cta-actions">
+      <a href="#" class="btn-primary">ابدأ مجاناً — لا يتطلب بطاقة</a>
+      <a href="#" class="btn-secondary">طلب عرض تجريبي للشركات</a>
+    </div>
+    <form class="cta-form" onsubmit="return false">
+      <input type="email" class="email-input" placeholder="أدخل بريدك الإلكتروني للانضمام لقائمة الانتظار">
+      <button class="email-btn" type="submit">انضم →</button>
+    </form>
+    <p style="font-size:0.75rem;color:var(--text-muted);margin-top:0.75rem">أكثر من 200 شخص انضموا هذا الأسبوع 🔥</p>
+  </div>
+</section>
+
+<!-- ═══ FOOTER ═══ -->
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:1rem">
+        <div class="logo-icon">AI</div>
+        <span class="logo-text">AI Hire Arab</span>
+      </div>
+      <p class="footer-tagline">منصة التوظيف الذكي العربية. نربط الباحثين عن عمل بالشركات عبر قوة الذكاء الاصطناعي.</p>
+      <div class="social-links" style="margin-top:1.25rem">
+        <a class="social-btn" href="#">in</a>
+        <a class="social-btn" href="#">𝕏</a>
+        <a class="social-btn" href="#">f</a>
+        <a class="social-btn" href="#">yt</a>
+      </div>
+    </div>
+    <div>
+      <div class="footer-heading">المنصة</div>
+      <ul class="footer-links">
+        <li><a href="#">للباحثين عن عمل</a></li>
+        <li><a href="#">للشركات</a></li>
+        <li><a href="#">الأسعار</a></li>
+        <li><a href="#">API للمطورين</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="footer-heading">الشركة</div>
+      <ul class="footer-links">
+        <li><a href="#">من نحن</a></li>
+        <li><a href="#">المدونة</a></li>
+        <li><a href="#">الوظائف</a></li>
+        <li><a href="#">الشراكات</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="footer-heading">الدعم</div>
+      <ul class="footer-links">
+        <li><a href="#">مركز المساعدة</a></li>
+        <li><a href="#">تواصل معنا</a></li>
+        <li><a href="#">سياسة الخصوصية</a></li>
+        <li><a href="#">الشروط والأحكام</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2025 AI Hire Arab — جميع الحقوق محفوظة</span>
+    <span>مبني بـ ❤ للسوق العربي</span>
+  </div>
+</footer>
+
+<!-- ═══ SCRIPTS ═══ -->
+<script>
+/* ─── NETWORK CONSTELLATION BACKGROUND ─── */
+const bgCanvas = document.getElementById('canvas3d');
+const ctx2d = bgCanvas.getContext('2d');
+
+function resizeBg(){bgCanvas.width=window.innerWidth;bgCanvas.height=window.innerHeight}
+resizeBg();
+window.addEventListener('resize', resizeBg);
+
+const NODE_COUNT = 90;
+const MAX_DIST = 160;
+let mouseX = window.innerWidth/2, mouseY = window.innerHeight/2;
+
+document.addEventListener('mousemove', e=>{ mouseX=e.clientX; mouseY=e.clientY; });
+
+const nodes = Array.from({length: NODE_COUNT}, ()=>({
+  x: Math.random() * window.innerWidth,
+  y: Math.random() * window.innerHeight,
+  vx: (Math.random() - 0.5) * 0.35,
+  vy: (Math.random() - 0.5) * 0.35,
+  r: Math.random() * 1.5 + 0.6,
+  pulse: Math.random() * Math.PI * 2,
+  /* 0=dim-blue  1=gold-dim  2=mid-blue */
+  type: Math.random() < 0.55 ? 0 : (Math.random() < 0.4 ? 1 : 2)
+}));
+
+/* colour palette — all kept VERY dim so they never fight the UI */
+const COLS = [
+  { dot:'rgba(30,80,160,{a})',  line:'rgba(26,70,140,{a})'  },   /* dim navy-blue  */
+  { dot:'rgba(140,100,24,{a})', line:'rgba(120,88,20,{a})'  },   /* dim gold       */
+  { dot:'rgba(20,60,130,{a})',  line:'rgba(18,55,120,{a})'  }    /* deeper blue    */
+];
+
+function fill(tpl, a){ return tpl.replace('{a}', a); }
+
+let raf;
+function drawBg(){
+  raf = requestAnimationFrame(drawBg);
+  const W = bgCanvas.width, H = bgCanvas.height;
+
+  ctx2d.clearRect(0,0,W,H);
+
+  /* faint vignette that deepens the edges */
+  const vig = ctx2d.createRadialGradient(W/2,H/2,H*0.15,W/2,H/2,H*0.85);
+  vig.addColorStop(0,'rgba(5,11,26,0)');
+  vig.addColorStop(1,'rgba(3,7,15,0.55)');
+  ctx2d.fillStyle = vig;
+  ctx2d.fillRect(0,0,W,H);
+
+  /* move nodes */
+  for(const n of nodes){
+    n.x += n.vx; n.y += n.vy; n.pulse += 0.012;
+    if(n.x<0||n.x>W) n.vx*=-1;
+    if(n.y<0||n.y>H) n.vy*=-1;
+    /* very gentle mouse repulsion */
+    const dx=n.x-mouseX, dy=n.y-mouseY, dist=Math.sqrt(dx*dx+dy*dy);
+    if(dist<120){ n.vx+=dx/dist*0.018; n.vy+=dy/dist*0.018; }
+    /* speed cap */
+    const spd=Math.sqrt(n.vx*n.vx+n.vy*n.vy);
+    if(spd>0.7){n.vx*=0.97;n.vy*=0.97;}
+  }
+
+  /* draw edges first */
+  for(let i=0;i<NODE_COUNT;i++){
+    for(let j=i+1;j<NODE_COUNT;j++){
+      const a=nodes[i], b=nodes[j];
+      const dx=a.x-b.x, dy=a.y-b.y;
+      const d=Math.sqrt(dx*dx+dy*dy);
+      if(d>MAX_DIST) continue;
+      const alpha = (1 - d/MAX_DIST) * 0.13;   /* max 13% opacity */
+      ctx2d.beginPath();
+      ctx2d.moveTo(a.x,a.y);
+      ctx2d.lineTo(b.x,b.y);
+      ctx2d.strokeStyle = fill(COLS[a.type].line, alpha.toFixed(3));
+      ctx2d.lineWidth = 0.6;
+      ctx2d.stroke();
+    }
+  }
+
+  /* draw nodes */
+  for(const n of nodes){
+    const breathe = 0.85 + Math.sin(n.pulse) * 0.15;
+    const radius = n.r * breathe;
+    const alpha = 0.18 + Math.sin(n.pulse)*0.07;   /* 11 – 25% opacity */
+    ctx2d.beginPath();
+    ctx2d.arc(n.x, n.y, radius, 0, Math.PI*2);
+    ctx2d.fillStyle = fill(COLS[n.type].dot, alpha.toFixed(3));
+    ctx2d.fill();
+  }
+
+  /* subtle horizontal scan-line shimmer (very low opacity) */
+  const t = Date.now()*0.00015;
+  const scanY = ((t % 1) * H * 2) % H;
+  const scan = ctx2d.createLinearGradient(0, scanY-40, 0, scanY+40);
+  scan.addColorStop(0,'rgba(26,110,255,0)');
+  scan.addColorStop(0.5,'rgba(26,110,255,0.025)');
+  scan.addColorStop(1,'rgba(26,110,255,0)');
+  ctx2d.fillStyle = scan;
+  ctx2d.fillRect(0, scanY-40, W, 80);
+}
+
+drawBg();
+
+/* ─── CURSOR ─── */
+const cursor = document.getElementById('cursor');
+const cursorDot = document.getElementById('cursorDot');
+let cx=0,cy=0,dx=0,dy=0;
+document.addEventListener('mousemove',e=>{dx=e.clientX;dy=e.clientY;cursorDot.style.left=dx+'px';cursorDot.style.top=dy+'px'});
+function animCursor(){cx+=(dx-cx)*0.12;cy+=(dy-cy)*0.12;cursor.style.left=cx+'px';cursor.style.top=cy+'px';requestAnimationFrame(animCursor)}
+animCursor();
+document.querySelectorAll('a,button,.step-card,.test-card,.feat-item').forEach(el=>{
+  el.addEventListener('mouseenter',()=>{cursor.style.width='40px';cursor.style.height='40px';cursor.style.borderColor='rgba(201,168,76,0.8)'});
+  el.addEventListener('mouseleave',()=>{cursor.style.width='20px';cursor.style.height='20px';cursor.style.borderColor='rgba(201,168,76,0.6)'});
+});
+
+/* ─── SCROLL REVEAL ─── */
+const observer = new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){e.target.classList.add('visible');observer.unobserve(e.target)}
+  });
+},{threshold:0.1});
+document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
+
+/* ─── COUNTER ANIMATION ─── */
+const countObserver = new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      const target = parseInt(e.target.getAttribute('data-count'));
+      let current=0;const step=target/60;
+      const timer=setInterval(()=>{
+        current+=step;
+        if(current>=target){current=target;clearInterval(timer)}
+        e.target.textContent = Math.floor(current).toLocaleString('ar-EG') + (e.target.getAttribute('data-count')>100?'+':'%');
+      },16);
+      countObserver.unobserve(e.target);
+    }
+  });
+},{threshold:0.5});
+document.querySelectorAll('[data-count]').forEach(el=>countObserver.observe(el));
+
+/* ─── NAV SCROLL ─── */
+window.addEventListener('scroll',()=>{
+  const nav=document.getElementById('mainNav');
+  if(window.scrollY>50){nav.style.background='rgba(5,11,26,0.97)';nav.style.boxShadow='0 4px 30px rgba(0,0,0,0.5)'}
+  else{nav.style.background='rgba(5,11,26,0.85)';nav.style.boxShadow='none'}
+});
+
+/* ─── PRICING TOGGLE ─── */
+function togglePricing(el){
+  const grid=document.getElementById('pricingGrid');
+  if(el.checked){
+    grid.innerHTML=`
+      <div class="price-card">
+        <div class="plan-name">ناشئة</div>
+        <div class="plan-price">$49<span>/شهر</span></div>
+        <div class="plan-desc">للشركات الصغيرة</div>
+        <ul class="plan-features">
+          <li><span class="check">✓</span> 3 وظائف نشطة</li>
+          <li><span class="check">✓</span> 50 طلب شهرياً</li>
+          <li><span class="check">✓</span> تصنيف AI للمتقدمين</li>
+          <li><span class="cross">✗</span> لوحة التحليلات</li>
+          <li><span class="cross">✗</span> API مخصص</li>
+        </ul>
+        <button class="plan-btn">ابدأ مجاناً</button>
+      </div>
+      <div class="price-card popular">
+        <div class="popular-tag">⭐ الأكثر شيوعاً</div>
+        <div class="plan-name">متوسطة</div>
+        <div class="plan-price">$149<span>/شهر</span></div>
+        <div class="plan-desc">للشركات المتنامية</div>
+        <ul class="plan-features">
+          <li><span class="check">✓</span> 15 وظيفة نشطة</li>
+          <li><span class="check">✓</span> طلبات غير محدودة</li>
+          <li><span class="check">✓</span> تصنيف AI متقدم</li>
+          <li><span class="check">✓</span> لوحة تحليلات كاملة</li>
+          <li><span class="cross">✗</span> API مخصص</li>
+        </ul>
+        <button class="plan-btn">اشترك الآن</button>
+      </div>
+      <div class="price-card">
+        <div class="plan-name">مؤسسية</div>
+        <div class="plan-price">$499<span>/شهر</span></div>
+        <div class="plan-desc">للمؤسسات الكبرى</div>
+        <ul class="plan-features">
+          <li><span class="check">✓</span> وظائف غير محدودة</li>
+          <li><span class="check">✓</span> كل مزايا المتوسطة</li>
+          <li><span class="check">✓</span> API + تكامل ATS</li>
+          <li><span class="check">✓</span> مدير حساب مخصص</li>
+          <li><span class="check">✓</span> SLA 99.9% uptime</li>
+        </ul>
+        <button class="plan-btn">تواصل معنا</button>
+      </div>
+    `;
+  } else {
+    grid.innerHTML=`
+      <div class="price-card">
+        <div class="plan-name">مجاني دائماً</div>
+        <div class="plan-price">$0<span>/شهر</span></div>
+        <div class="plan-desc">ابدأ واكتشف المنصة</div>
+        <ul class="plan-features">
+          <li><span class="check">✓</span> 3 طلبات تقديم شهرياً</li>
+          <li><span class="check">✓</span> تحليل AI للـ CV مرة واحدة</li>
+          <li><span class="check">✓</span> بحث عن الوظائف</li>
+          <li><span class="cross">✗</span> رسائل تقديم بـ AI</li>
+          <li><span class="cross">✗</span> محاكاة المقابلات</li>
+          <li><span class="cross">✗</span> تنبيهات ذكية</li>
+        </ul>
+        <button class="plan-btn">ابدأ مجاناً</button>
+      </div>
+      <div class="price-card popular">
+        <div class="popular-tag">⭐ الأكثر شيوعاً</div>
+        <div class="plan-name">أساسي</div>
+        <div class="plan-price">$9<span>/شهر</span></div>
+        <div class="plan-desc">للباحث الجاد</div>
+        <ul class="plan-features">
+          <li><span class="check">✓</span> تقديم غير محدود</li>
+          <li><span class="check">✓</span> تحليل AI شهري</li>
+          <li><span class="check">✓</span> رسائل تقديم بـ AI</li>
+          <li><span class="check">✓</span> تنبيهات وظائف ذكية</li>
+          <li><span class="cross">✗</span> محاكاة المقابلات</li>
+          <li><span class="cross">✗</span> التقديم المجهول</li>
+        </ul>
+        <button class="plan-btn">اشترك الآن</button>
+      </div>
+      <div class="price-card">
+        <div class="plan-name">بريميوم</div>
+        <div class="plan-price">$19<span>/شهر</span></div>
+        <div class="plan-desc">للنخبة المحترفة</div>
+        <ul class="plan-features">
+          <li><span class="check">✓</span> كل مزايا الأساسي</li>
+          <li><span class="check">✓</span> تحليل AI أسبوعي</li>
+          <li><span class="check">✓</span> محاكاة مقابلات بـ AI</li>
+          <li><span class="check">✓</span> التقديم بهوية مجهولة</li>
+          <li><span class="check">✓</span> دعم Chat مباشر 24/7</li>
+          <li><span class="check">✓</span> مسار تطوير المهارات</li>
+        </ul>
+        <button class="plan-btn">ابدأ تجربة مجانية</button>
+      </div>
+    `;
+  }
+}
+
+/* ─── AI ANALYSIS DEMO ─── */
+function showAnalysis(){
+  const uploadArea = document.getElementById('uploadArea');
+  const result = document.getElementById('analysisResult');
+  uploadArea.innerHTML='<div style="text-align:center;padding:1.5rem"><div style="font-size:1.5rem;margin-bottom:0.5rem">⚡</div><div style="color:var(--cyan);font-weight:700;font-size:0.9rem">يتم التحليل بالذكاء الاصطناعي...</div><div style="margin-top:0.75rem;height:4px;background:rgba(255,255,255,0.08);border-radius:2px;overflow:hidden"><div style="height:100%;background:linear-gradient(90deg,var(--blue),var(--cyan));animation:barGrow 2s ease forwards;--w:100%"></div></div></div>';
+  setTimeout(()=>{
+    uploadArea.style.display='none';
+    result.style.display='block';
+  }, 2000);
+}
+
+/* ─── SMOOTH ACTIVE NAV ─── */
+document.querySelectorAll('a[href^="#"]').forEach(a=>{
+  a.addEventListener('click',e=>{
+    e.preventDefault();
+    const target=document.querySelector(a.getAttribute('href'));
+    if(target) target.scrollIntoView({behavior:'smooth'});
+  });
+});
+</script>
+</body>
+</html>
