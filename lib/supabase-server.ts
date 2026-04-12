@@ -1,19 +1,13 @@
-import { createServerClient, createBrowserClient } from '@supabase/ssr'
+import 'server-only'
+import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 import { NextRequest, NextResponse } from 'next/server'
 
-// Read env at call-time so tests can set process.env before calling
 function getEnv() {
   return {
     supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL!,
     supabaseAnonKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
   }
-}
-
-// For Client Components
-export function createBrowserSupabaseClient() {
-  const { supabaseUrl, supabaseAnonKey } = getEnv()
-  return createBrowserClient(supabaseUrl, supabaseAnonKey)
 }
 
 // For Server Components and Route Handlers
@@ -26,9 +20,13 @@ export async function createServerSupabaseClient() {
         return cookieStore.getAll()
       },
       setAll(cookiesToSet) {
-        cookiesToSet.forEach(({ name, value, options }) =>
-          cookieStore.set(name, value, options)
-        )
+        try {
+          cookiesToSet.forEach(({ name, value, options }) =>
+            cookieStore.set(name, value, options)
+          )
+        } catch {
+          // Server Component context — cookie writes are not allowed, ignore
+        }
       },
     },
   })
