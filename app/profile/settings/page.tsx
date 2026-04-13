@@ -16,7 +16,7 @@ export default async function ProfileSettingsPage() {
 
   if (!profile) redirect('/auth/login')
 
-  const isOAuthUser = user.app_metadata?.provider !== 'email'
+  const isOAuthUser = !user.identities?.some((id: { provider: string }) => id.provider === 'email')
 
   return (
     <div style={{

@@ -61,6 +61,13 @@ export default function RegisterForm() {
     }
 
     setSuccess(true)
+
+    // Dispatch welcome event via server route
+    fetch('/api/auth/send-welcome', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: form.name, email: form.email, role: form.role }),
+    })
   }
 
   const inputStyle = {

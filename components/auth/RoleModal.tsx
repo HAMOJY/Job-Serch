@@ -25,8 +25,7 @@ export default function RoleModal({ userId, onClose }: RoleModalProps) {
     const supabase = createBrowserSupabaseClient()
     const { error: updateError } = await supabase
       .from('profiles')
-      .update({ role: selected })
-      .eq('id', userId)
+      .upsert({ id: userId, name: '', role: selected }, { onConflict: 'id' })
 
     setLoading(false)
 

@@ -47,8 +47,12 @@ export default function ProfileForm({ profile }: { profile: Profile }) {
 
     setLoading(true)
     const supabase = createBrowserSupabaseClient()
-    await supabase.from('profiles').update(result.data).eq('id', profile.id)
+    const { error: saveError } = await supabase.from('profiles').update(result.data).eq('id', profile.id)
     setLoading(false)
+    if (saveError) {
+      setErrors({ name: 'حدث خطأ أثناء الحفظ، يرجى المحاولة مجدداً' })
+      return
+    }
     setSaved(true)
   }
 

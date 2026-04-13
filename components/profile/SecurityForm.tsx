@@ -32,8 +32,12 @@ export default function SecurityForm({ isOAuthUser }: { isOAuthUser: boolean }) 
 
     setLoading(true)
     const supabase = createBrowserSupabaseClient()
-    await supabase.auth.updateUser({ password: form.password })
+    const { error: updateError } = await supabase.auth.updateUser({ password: form.password })
     setLoading(false)
+    if (updateError) {
+      setErrors({ password: 'حدث خطأ، يرجى المحاولة مجدداً' })
+      return
+    }
     setSaved(true)
     setForm({ password: '', confirmPassword: '' })
   }

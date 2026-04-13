@@ -45,7 +45,9 @@ export default function LoginForm() {
       return
     }
 
-    const next = searchParams.get('next') ?? '/analyze'
+    const rawNext = searchParams.get('next') ?? '/analyze'
+    // Only follow relative paths — block external redirects like https://evil.com or //evil.com
+    const next = rawNext.startsWith('/') && !rawNext.startsWith('//') ? rawNext : '/analyze'
     router.replace(next)
   }
 
