@@ -13,7 +13,7 @@ export default async function DashboardPage() {
     .from('profiles')
     .select('*')
     .eq('id', user.id)
-    .single()
+    .maybeSingle()
 
   const { data: analyses } = await supabase
     .from('cv_analyses')

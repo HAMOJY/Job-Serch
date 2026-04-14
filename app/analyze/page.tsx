@@ -19,7 +19,7 @@ export default async function AnalyzePage({
     .from('profiles')
     .select('id, name, role')
     .eq('id', user.id)
-    .single()
+    .maybeSingle()
 
   const { data: latestAnalysis } = await supabase
     .from('cv_analyses')

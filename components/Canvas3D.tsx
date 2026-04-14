@@ -169,8 +169,6 @@ export default function Canvas3D() {
             ctx!.beginPath()
             ctx!.moveTo(a.x, a.y - parallaxY)
             ctx!.lineTo(b.x, b.y - parallaxY)
-            ctx!.strokeStyle = `rgba(${n.color[0]},${n.color[1]},${n.color[2]},${alpha})`.replace('n.color', 'layer.color').split('n.color').join('')
-            // Use layer color directly:
             ctx!.strokeStyle = `rgba(${layer.color[0]},${layer.color[1]},${layer.color[2]},${alpha})`
             ctx!.lineWidth = 0.5
             ctx!.stroke()
@@ -188,7 +186,7 @@ export default function Canvas3D() {
 
         ctx!.beginPath()
         ctx!.arc(n.x, n.y - parallaxY, radius, 0, Math.PI * 2)
-        ctx!.fillStyle = `rgba(${n.color[0]},${n.color[1]},${n.color[2]},${alpha})`
+        ctx!.fillStyle = `rgba(${layer.color[0]},${layer.color[1]},${layer.color[2]},${alpha})`
         ctx!.fill()
       }
 

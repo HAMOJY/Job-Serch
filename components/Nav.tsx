@@ -35,7 +35,6 @@ export default function Nav() {
           <li><a href="#ai-features">مميزات الذكاء الاصطناعي</a></li>
           <li><a href="#for-who">لمن هي</a></li>
           <li><a href="#pricing">الأسعار</a></li>
-          <li><a href="#roadmap">خارطة الطريق</a></li>
         </ul>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
           <Link href="/dashboard" style={{ color: '#8A9AB8', fontSize: '0.85rem', textDecoration: 'none', fontWeight: 500 }}>لوحتي</Link>
@@ -50,7 +49,6 @@ export default function Nav() {
         <a href="#ai-features" onClick={() => setMenuOpen(false)}>مميزات الذكاء الاصطناعي</a>
         <a href="#for-who" onClick={() => setMenuOpen(false)}>لمن هي</a>
         <a href="#pricing" onClick={() => setMenuOpen(false)}>الأسعار</a>
-        <a href="#roadmap" onClick={() => setMenuOpen(false)}>خارطة الطريق</a>
         <button className="mobile-cta" onClick={() => { setMenuOpen(false); setModalOpen(true) }}
           style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'Cairo,sans-serif', width: '100%', textAlign: 'center', padding: '0.8rem', color: '#fff', fontWeight: 700 }}>
           ابدأ مجاناً ←
