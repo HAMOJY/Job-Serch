@@ -61,10 +61,11 @@ describe('AnalyzeClient', () => {
 
   it('shows initial analysis when provided', () => {
     const analysis = {
-      id: 'a1', filename: 'cv.pdf', score: 87,
+      id: 'a1', user_id: 'u1', filename: 'cv.pdf', file_path: 'u1/a1.pdf', score: 87,
       categories: { technical_skills: 91, work_experience: 85, education: 78, clarity: 94 },
       recommendations: ['rec1'],
       status: 'done' as const,
+      error_msg: null,
       created_at: '2025-01-01T00:00:00Z',
     }
     render(<AnalyzeClient {...BASE_PROPS} initialAnalysis={analysis} />)
