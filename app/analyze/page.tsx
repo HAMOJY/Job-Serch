@@ -27,7 +27,7 @@ export default async function AnalyzePage({
     .eq('user_id', user.id)
     .order('created_at', { ascending: false })
     .limit(1)
-    .single()
+    .maybeSingle()
 
   const params = await searchParams
   const selectRole = params.selectRole === '1'

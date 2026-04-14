@@ -38,7 +38,10 @@ const VERIFIED_USER = { id: 'user-1', email_confirmed_at: '2025-01-01T00:00:00Z'
 const UNVERIFIED_USER = { id: 'user-1', email_confirmed_at: null }
 
 describe('POST /api/cv/analyze', () => {
-  beforeEach(() => jest.clearAllMocks())
+  beforeEach(() => {
+    jest.clearAllMocks()
+    mockStorageRemove.mockResolvedValue({ error: null })
+  })
 
   it('returns 401 when unauthenticated', async () => {
     mockGetUser.mockResolvedValue({ data: { user: null } })

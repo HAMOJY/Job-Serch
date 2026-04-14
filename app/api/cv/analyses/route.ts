@@ -19,7 +19,7 @@ export async function GET() {
 
   if (error) {
     console.error('Failed to fetch analyses:', error)
-    return NextResponse.json({ error: 'Failed to fetch analyses' }, { status: 500 })
+    return NextResponse.json({ error: 'فشل جلب السجل، حاول مجدداً' }, { status: 500 })
   }
 
   return NextResponse.json(data ?? [])

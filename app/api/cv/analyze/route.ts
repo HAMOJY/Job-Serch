@@ -83,7 +83,8 @@ export async function POST(req: NextRequest) {
   try {
     extractedText = await extractTextFromBuffer(buffer, mimeType)
   } catch {
-    await supabase.storage.from('cvs').remove([filePath])
+    const { error: removeErr } = await supabase.storage.from('cvs').remove([filePath])
+    if (removeErr) console.error('Storage cleanup failed after extraction error:', removeErr)
     return NextResponse.json(
       { error: 'تعذّر قراءة الملف، تأكد أنه غير محمي بكلمة مرور' },
       { status: 422 }
@@ -94,7 +95,8 @@ export async function POST(req: NextRequest) {
   try {
     analysis = await analyzeCV(extractedText)
   } catch {
-    await supabase.storage.from('cvs').remove([filePath])
+    const { error: removeErr } = await supabase.storage.from('cvs').remove([filePath])
+    if (removeErr) console.error('Storage cleanup failed after analysis error:', removeErr)
     return NextResponse.json(
       { error: 'حدث خطأ في التحليل، حاول مجدداً' },
       { status: 500 }
@@ -118,7 +120,8 @@ export async function POST(req: NextRequest) {
 
   if (dbError || !savedAnalysis) {
     console.error('DB insert failed:', dbError)
-    await supabase.storage.from('cvs').remove([filePath])
+    const { error: removeErr } = await supabase.storage.from('cvs').remove([filePath])
+    if (removeErr) console.error('Storage cleanup failed after DB error:', removeErr)
     return NextResponse.json({ error: 'فشل حفظ النتائج' }, { status: 500 })
   }
 

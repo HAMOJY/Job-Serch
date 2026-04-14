@@ -109,7 +109,7 @@ export default function AnalyzeClient({
         )}
 
         {/* Upload zone */}
-        {state !== 'done' && (
+        {state !== 'done' && state !== 'analyzing' && (
           <div style={{ marginBottom: '2rem' }}>
             <UploadZone onFile={handleFile} disabled={!emailVerified} />
           </div>
