@@ -8,7 +8,7 @@ export default function Hero() {
       const target = parseInt(el.dataset.count || '0')
       const suffix = el.dataset.suffix || ''
       let current = 0
-      const step = target / 60
+      const step = Math.max(target / 60, 1)
       const timer = setInterval(() => {
         current = Math.min(current + step, target)
         el.textContent = Math.floor(current) + suffix
@@ -44,7 +44,7 @@ export default function Hero() {
       <div style={{ position: 'relative', zIndex: 2, maxWidth: '850px' }}>
         <div className="hero-badge">
           <span className="badge-dot"></span>
-          منصة التوظيف الذكي العربية #1
+          منصة التوظيف الذكي العربية — مدعومة بـ Claude AI
         </div>
 
         <h1 className="hero-title">
@@ -53,31 +53,31 @@ export default function Hero() {
         </h1>
 
         <p className="hero-sub">
-          منصة توظيف عربية ذكية تحلل سيرتك الذاتية، تطابقك مع الوظائف المناسبة،
-          وتوفر على الشركات 80% من وقت الفرز — كل ذلك بالعربية بالكامل
+          حلّل سيرتك الذاتية بالذكاء الاصطناعي في 30 ثانية، واكتشف نقاط قوتك وما يجب تحسينه
+          للحصول على الوظيفة التي تستحقها — بالعربية بالكامل
         </p>
 
         <div className="hero-actions">
-          <a href="#cta" className="btn-primary">ابدأ مجاناً الآن ← </a>
+          <a href="/auth/register" className="btn-primary">حلّل سيرتك مجاناً ← </a>
           <a href="#how" className="btn-secondary">▶ شاهد كيف تعمل</a>
         </div>
 
         <div className="hero-stats">
           <div className="stat-item">
-            <span className="stat-num" data-count="25000">0</span>
-            <div className="stat-label">باحث عن عمل</div>
+            <span className="stat-num" data-count="30" data-suffix="ث">0</span>
+            <div className="stat-label">وقت التحليل الكامل</div>
           </div>
           <div className="stat-item">
-            <span className="stat-num" data-count="500">0</span>
-            <div className="stat-label">شركة موثوقة</div>
+            <span className="stat-num" data-count="94" data-suffix="%">0</span>
+            <div className="stat-label">دقة التحليل بالذكاء الاصطناعي</div>
           </div>
           <div className="stat-item">
-            <span className="stat-num" data-count="94">0</span>
-            <div className="stat-label">% دقة المطابقة</div>
+            <span className="stat-num" data-count="80" data-suffix="%">0</span>
+            <div className="stat-label">توفير في وقت مراجعة الـ CV</div>
           </div>
           <div className="stat-item">
-            <span className="stat-num" data-count="80">0</span>
-            <div className="stat-label">% توفير في وقت HR</div>
+            <span className="stat-num" data-count="5" data-suffix="+">0</span>
+            <div className="stat-label">دول عربية مستهدفة</div>
           </div>
         </div>
       </div>
