@@ -36,7 +36,7 @@ export async function POST(req: NextRequest) {
   try {
     formData = await req.formData()
   } catch {
-    return NextResponse.json({ error: 'Invalid form data' }, { status: 400 })
+    return NextResponse.json({ error: 'بيانات الطلب غير صحيحة' }, { status: 400 })
   }
 
   const file = formData.get('file') as File | null
@@ -75,6 +75,7 @@ export async function POST(req: NextRequest) {
     .upload(filePath, buffer, { contentType: mimeType })
 
   if (uploadError) {
+    console.error('Storage upload failed:', uploadError)
     return NextResponse.json({ error: 'فشل رفع الملف' }, { status: 500 })
   }
 
@@ -82,6 +83,7 @@ export async function POST(req: NextRequest) {
   try {
     extractedText = await extractTextFromBuffer(buffer, mimeType)
   } catch {
+    await supabase.storage.from('cvs').remove([filePath])
     return NextResponse.json(
       { error: 'تعذّر قراءة الملف، تأكد أنه غير محمي بكلمة مرور' },
       { status: 422 }
@@ -92,6 +94,7 @@ export async function POST(req: NextRequest) {
   try {
     analysis = await analyzeCV(extractedText)
   } catch {
+    await supabase.storage.from('cvs').remove([filePath])
     return NextResponse.json(
       { error: 'حدث خطأ في التحليل، حاول مجدداً' },
       { status: 500 }
@@ -114,6 +117,8 @@ export async function POST(req: NextRequest) {
     .single()
 
   if (dbError || !savedAnalysis) {
+    console.error('DB insert failed:', dbError)
+    await supabase.storage.from('cvs').remove([filePath])
     return NextResponse.json({ error: 'فشل حفظ النتائج' }, { status: 500 })
   }
 

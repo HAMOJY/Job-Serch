@@ -5,6 +5,7 @@ import { NextRequest } from 'next/server'
 
 const mockGetUser = jest.fn()
 const mockStorageUpload = jest.fn()
+const mockStorageRemove = jest.fn()
 const mockDbInsert = jest.fn()
 const mockExtractText = jest.fn()
 const mockAnalyzeCV = jest.fn()
@@ -12,7 +13,7 @@ const mockAnalyzeCV = jest.fn()
 jest.mock('@/lib/supabase-server', () => ({
   createServerSupabaseClient: jest.fn(() => ({
     auth: { getUser: mockGetUser },
-    storage: { from: () => ({ upload: mockStorageUpload }) },
+    storage: { from: () => ({ upload: mockStorageUpload, remove: mockStorageRemove }) },
     from: () => ({
       insert: () => ({ select: () => ({ single: mockDbInsert }) }),
     }),
