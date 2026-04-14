@@ -32,6 +32,19 @@ export async function POST(req: NextRequest) {
     )
   }
 
+  // One free analysis per user
+  const { count } = await supabase
+    .from('cv_analyses')
+    .select('id', { count: 'exact', head: true })
+    .eq('user_id', user.id)
+
+  if ((count ?? 0) >= 1) {
+    return NextResponse.json(
+      { error: 'لقد استخدمت تحليلك المجاني. تواصل معنا للحصول على المزيد.' },
+      { status: 429 }
+    )
+  }
+
   let formData: FormData
   try {
     formData = await req.formData()

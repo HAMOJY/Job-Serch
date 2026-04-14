@@ -1,5 +1,6 @@
 'use client'
 import { useState, useEffect } from 'react'
+import Link from 'next/link'
 import WaitlistModal from './WaitlistModal'
 
 export default function Nav() {
@@ -37,6 +38,7 @@ export default function Nav() {
           <li><a href="#roadmap">خارطة الطريق</a></li>
         </ul>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+          <Link href="/dashboard" style={{ color: '#8A9AB8', fontSize: '0.85rem', textDecoration: 'none', fontWeight: 500 }}>لوحتي</Link>
           <button className="nav-cta" onClick={() => setModalOpen(true)}>ابدأ مجاناً</button>
           <button className={`hamburger${menuOpen ? ' open' : ''}`} onClick={() => setMenuOpen(v => !v)} aria-label="قائمة التنقل">
             <span/><span/><span/>

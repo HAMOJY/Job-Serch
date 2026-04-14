@@ -5,7 +5,6 @@ import HowItWorks from '@/components/sections/HowItWorks'
 import AIFeatures from '@/components/sections/AIFeatures'
 import ForWho from '@/components/sections/ForWho'
 import Pricing from '@/components/sections/Pricing'
-import Roadmap from '@/components/sections/Roadmap'
 import StatsTicker from '@/components/sections/StatsTicker'
 import CTA from '@/components/sections/CTA'
 import Footer from '@/components/sections/Footer'
@@ -21,7 +20,6 @@ export default function Home() {
         <AIFeatures />
         <ForWho />
         <Pricing />
-        <Roadmap />
         <StatsTicker />
         <CTA />
       </main>
