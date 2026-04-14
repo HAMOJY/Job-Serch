@@ -25,16 +25,23 @@ describe('extractTextFromBuffer', () => {
 
   it('extracts text from PDF buffer', async () => {
     const mockGetText = jest.fn().mockResolvedValue({ text: 'Ahmed Ali — Software Engineer' })
-    MockPDFParse.mockImplementation(() => ({ getText: mockGetText } as unknown as InstanceType<typeof PDFParse>))
+    const mockDestroy = jest.fn().mockResolvedValue(undefined)
+    MockPDFParse.mockImplementation(() => ({
+      getText: mockGetText,
+      destroy: mockDestroy,
+    } as unknown as InstanceType<typeof PDFParse>))
+
     const buf = Buffer.from('fake pdf bytes')
     const result = await extractTextFromBuffer(buf, PDF_MIME)
+
     expect(result).toBe('Ahmed Ali — Software Engineer')
-    expect(MockPDFParse).toHaveBeenCalledWith(buf)
+    expect(MockPDFParse).toHaveBeenCalledWith({ data: expect.any(Uint8Array) })
     expect(mockGetText).toHaveBeenCalled()
+    expect(mockDestroy).toHaveBeenCalled()
   })
 
   it('extracts text from DOCX buffer', async () => {
-    mockMammothExtract.mockResolvedValue({ value: 'Ahmed Ali — Software Engineer' } as never)
+    mockMammothExtract.mockResolvedValue({ value: 'Ahmed Ali — Software Engineer', messages: [] })
     const buf = Buffer.from('fake docx bytes')
     const result = await extractTextFromBuffer(buf, DOCX_MIME)
     expect(result).toBe('Ahmed Ali — Software Engineer')
@@ -43,10 +50,16 @@ describe('extractTextFromBuffer', () => {
 
   it('throws on empty extracted text', async () => {
     const mockGetText = jest.fn().mockResolvedValue({ text: '   ' })
-    MockPDFParse.mockImplementation(() => ({ getText: mockGetText } as unknown as InstanceType<typeof PDFParse>))
+    const mockDestroy = jest.fn().mockResolvedValue(undefined)
+    MockPDFParse.mockImplementation(() => ({
+      getText: mockGetText,
+      destroy: mockDestroy,
+    } as unknown as InstanceType<typeof PDFParse>))
+
     const buf = Buffer.from('empty')
     await expect(extractTextFromBuffer(buf, PDF_MIME)).rejects.toThrow(
       'لم يتم العثور على نص في الملف'
     )
+    expect(mockDestroy).toHaveBeenCalled()
   })
 })

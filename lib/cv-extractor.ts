@@ -13,9 +13,13 @@ export async function extractTextFromBuffer(
   let text: string
 
   if (mimeType === 'application/pdf') {
-    const parser = new PDFParse(buffer)
-    const data = await parser.getText()
-    text = data.text
+    const parser = new PDFParse({ data: new Uint8Array(buffer) })
+    try {
+      const data = await parser.getText()
+      text = data.text
+    } finally {
+      await parser.destroy()
+    }
   } else {
     const result = await mammoth.extractRawText({ buffer })
     text = result.value
