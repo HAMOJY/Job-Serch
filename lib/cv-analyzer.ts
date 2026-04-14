@@ -17,16 +17,21 @@ export type AnalysisResult = z.infer<typeof AnalysisSchema>
 
 export interface CvAnalysisRow {
   id: string
+  user_id: string
   filename: string
+  file_path: string
   score: number
   categories: AnalysisResult['categories']
   recommendations: string[]
   status: 'done' | 'error'
+  error_msg: string | null
   created_at: string
 }
 
 const SYSTEM_PROMPT = `أنت خبير في تحليل السير الذاتية للسوق العربي. مهمتك تحليل السيرة الذاتية وإعطاء تقرير مفصل.
 أجب دائماً بـ JSON صحيح فقط، بدون أي نص خارج الـ JSON.`
+
+const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
 
 function buildPrompt(text: string): string {
   return `حلل السيرة الذاتية التالية وأعطني JSON بهذا الشكل بالضبط:
@@ -50,15 +55,16 @@ ${text}`
 }
 
 export async function analyzeCV(text: string): Promise<AnalysisResult> {
-  const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
+  if (!text.trim()) throw new Error('CV text must not be empty')
+
   let lastError: unknown
 
   for (let attempt = 0; attempt < 2; attempt++) {
     try {
       const message = await client.messages.create({
         model: 'claude-sonnet-4-6',
-        max_tokens: 1024,
-        system: SYSTEM_PROMPT,
+        max_tokens: 2048,
+        system: [{ type: 'text', text: SYSTEM_PROMPT, cache_control: { type: 'ephemeral' } }],
         messages: [{ role: 'user', content: buildPrompt(text) }],
       })
 
@@ -66,13 +72,13 @@ export async function analyzeCV(text: string): Promise<AnalysisResult> {
       if (content.type !== 'text') throw new Error('Unexpected response type from Claude')
 
       const jsonText = content.text
-        .replace(/^```json\s*/i, '')
-        .replace(/^```\s*/i, '')
-        .replace(/\s*```$/i, '')
+        .replace(/^```(?:json)?\s*/i, '')
+        .replace(/\s*```\s*$/i, '')
         .trim()
 
       return AnalysisSchema.parse(JSON.parse(jsonText))
     } catch (err) {
+      if (err instanceof z.ZodError) throw err  // schema failure: don't retry
       lastError = err
     }
   }

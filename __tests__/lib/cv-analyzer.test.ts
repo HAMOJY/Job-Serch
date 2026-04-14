@@ -2,14 +2,26 @@
  * @jest-environment node
  */
 
-const mockCreate = jest.fn()
+// jest.mock() is hoisted before any variable initialisation.
+// Variables referenced inside the factory must be hoisted too (i.e. declared with
+// `var`), otherwise they are in the Temporal Dead Zone when the factory executes.
+//
+// The cv-analyzer module creates `const client = new Anthropic(...)` at module
+// scope, so the constructor is called exactly once (at import time).  We return
+// the same singleton object every time the constructor is called so that tests
+// can control `messages.create` on that object.
 
-jest.mock('@anthropic-ai/sdk', () => ({
-  __esModule: true,
-  default: jest.fn().mockImplementation(() => ({
-    messages: { create: mockCreate },
-  })),
-}))
+/* eslint-disable no-var */
+var sharedMockInstance: { messages: { create: jest.Mock } }
+/* eslint-enable no-var */
+
+jest.mock('@anthropic-ai/sdk', () => {
+  sharedMockInstance = { messages: { create: jest.fn() } }
+  return {
+    __esModule: true,
+    default: jest.fn(() => sharedMockInstance),
+  }
+})
 
 import { analyzeCV } from '@/lib/cv-analyzer'
 
@@ -29,7 +41,14 @@ const VALID_RESPONSE = {
 }
 
 describe('analyzeCV', () => {
-  beforeEach(() => jest.clearAllMocks())
+  let mockCreate: jest.Mock
+
+  beforeAll(() => {
+    // The factory runs once; grab the create fn from the singleton
+    mockCreate = sharedMockInstance.messages.create
+  })
+
+  beforeEach(() => mockCreate.mockReset())
 
   it('returns structured analysis for a CV', async () => {
     mockCreate.mockResolvedValue({
@@ -74,5 +93,14 @@ describe('analyzeCV', () => {
       content: [{ type: 'text', text: 'not valid json at all' }],
     })
     await expect(analyzeCV('some cv text')).rejects.toThrow()
+  })
+
+  it('throws on valid JSON but wrong schema (missing score)', async () => {
+    mockCreate.mockResolvedValue({
+      content: [{ type: 'text', text: JSON.stringify({ categories: {}, recommendations: [] }) }],
+    })
+    await expect(analyzeCV('some cv text')).rejects.toThrow()
+    // Should fail on Zod validation without retrying
+    expect(mockCreate).toHaveBeenCalledTimes(1)
   })
 })
