@@ -1,3 +1,4 @@
+import { Suspense } from 'react'
 import LoginForm from '@/components/auth/LoginForm'
 import OAuthButtons from '@/components/auth/OAuthButtons'
 import Link from 'next/link'
@@ -29,7 +30,9 @@ export default function LoginPage() {
           أهلاً بعودتك في AI Hire Arab
         </p>
 
-        <LoginForm />
+        <Suspense fallback={<div style={{ color: '#8A9AB8', textAlign: 'center', padding: '1rem' }}>...</div>}>
+          <LoginForm />
+        </Suspense>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', margin: '1.25rem 0' }}>
           <div style={{ flex: 1, height: '1px', background: '#1A3060' }} />
