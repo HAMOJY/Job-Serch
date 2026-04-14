@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation'
 import { createServerSupabaseClient } from '@/lib/supabase-server'
 import AnalyzeClient from './analyze-client'
+import type { CvAnalysisRow } from '@/lib/cv-analyzer'
 
 export default async function AnalyzePage({
   searchParams,
@@ -8,7 +9,9 @@ export default async function AnalyzePage({
   searchParams: Promise<{ selectRole?: string }>
 }) {
   const supabase = await createServerSupabaseClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
 
   if (!user) redirect('/auth/login')
 
@@ -18,8 +21,24 @@ export default async function AnalyzePage({
     .eq('id', user.id)
     .single()
 
+  const { data: latestAnalysis } = await supabase
+    .from('cv_analyses')
+    .select('id, filename, score, categories, recommendations, status, created_at')
+    .eq('user_id', user.id)
+    .order('created_at', { ascending: false })
+    .limit(1)
+    .single()
+
   const params = await searchParams
   const selectRole = params.selectRole === '1'
 
-  return <AnalyzeClient profile={profile} userId={user.id} showRoleModal={selectRole} />
+  return (
+    <AnalyzeClient
+      profile={profile}
+      userId={user.id}
+      showRoleModal={selectRole}
+      emailVerified={!!user.email_confirmed_at}
+      initialAnalysis={(latestAnalysis as CvAnalysisRow | null) ?? null}
+    />
+  )
 }
