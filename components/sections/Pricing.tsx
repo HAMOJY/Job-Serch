@@ -143,7 +143,7 @@ export default function Pricing() {
                 </li>
               ))}
             </ul>
-            <button className="plan-btn">{plan.btnText}</button>
+            <a href="/auth/register" className="plan-btn" style={{ display: 'block', textDecoration: 'none', textAlign: 'center' }}>{plan.btnText}</a>
           </div>
         ))}
       </div>
