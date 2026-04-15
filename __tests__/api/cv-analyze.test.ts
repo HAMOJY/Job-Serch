@@ -15,6 +15,11 @@ jest.mock('@/lib/supabase-server', () => ({
     auth: { getUser: mockGetUser },
     storage: { from: () => ({ upload: mockStorageUpload, remove: mockStorageRemove }) },
     from: () => ({
+      // count check: from('cv_analyses').select(..., { count: 'exact', head: true }).eq(...)
+      select: jest.fn().mockReturnValue({
+        eq: jest.fn().mockResolvedValue({ count: 0 }),
+      }),
+      // save: from('cv_analyses').insert(...).select().single()
       insert: () => ({ select: () => ({ single: mockDbInsert }) }),
     }),
   })),

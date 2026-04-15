@@ -250,9 +250,10 @@ export default function DashboardClient({ profile, user, analyses }: Props) {
         )}
 
         {/* Quick links */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '0.75rem', marginTop: '1rem' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: '0.75rem', marginTop: '1rem' }}>
           {[
             { href: '/analyze', label: '🧠 تحليل CV', desc: 'ارفع سيرتك الذاتية' },
+            { href: '/jobs', label: '🔍 وظائف مناسبة', desc: 'بحث ذكي بالـ AI' },
             { href: '/profile/settings', label: '⚙️ الإعدادات', desc: 'تعديل ملفك الشخصي' },
             { href: '/', label: '🏠 الرئيسية', desc: 'العودة للموقع' },
           ].map(({ href, label, desc }) => (

@@ -62,7 +62,7 @@ describe('AnalyzeClient', () => {
   it('shows initial analysis when provided', () => {
     const analysis = {
       id: 'a1', user_id: 'u1', filename: 'cv.pdf', file_path: 'u1/a1.pdf', score: 87,
-      categories: { technical_skills: 91, work_experience: 85, education: 78, clarity: 94 },
+      categories: { technical_skills: 91, work_experience: 85, education: 78, clarity: 94, language_quality: 80, ats_compatibility: 75 },
       recommendations: ['rec1'],
       status: 'done' as const,
       error_msg: null,
@@ -78,7 +78,7 @@ describe('AnalyzeClient', () => {
       ok: true,
       json: async () => ({
         id: 'a1', filename: 'cv.pdf', score: 92,
-        categories: { technical_skills: 95, work_experience: 90, education: 88, clarity: 96 },
+        categories: { technical_skills: 95, work_experience: 90, education: 88, clarity: 96, language_quality: 85, ats_compatibility: 80 },
         recommendations: ['توصية'],
         status: 'done',
         created_at: '2025-01-01T00:00:00Z',
