@@ -1,5 +1,6 @@
 import 'server-only'
-import Anthropic from '@anthropic-ai/sdk'
+import Anthropic, { toFile } from '@anthropic-ai/sdk'
+import type { MessageParam } from '@anthropic-ai/sdk/resources/messages'
 import mammoth from 'mammoth'
 
 export type SupportedMimeType =
@@ -8,33 +9,35 @@ export type SupportedMimeType =
 
 const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
 
+void toFile // imported for side-effects only
+
 /**
  * Extract text from a PDF buffer using Claude's native document understanding.
  * This handles Arabic, English, and mixed-language PDFs without any PDF parsing library.
  */
 async function extractFromPDF(buffer: Buffer): Promise<string> {
+  const userMessage: MessageParam = {
+    role: 'user',
+    content: [
+      {
+        type: 'document',
+        source: {
+          type: 'base64',
+          media_type: 'application/pdf',
+          data: buffer.toString('base64'),
+        },
+      },
+      {
+        type: 'text',
+        text: 'استخرج كل النص الموجود في هذا المستند كما هو بالضبط، بدون أي تعليق أو تفسير. فقط النص الخام.',
+      },
+    ],
+  }
+
   const message = await client.messages.create({
     model: 'claude-haiku-4-5-20251001',
     max_tokens: 4000,
-    messages: [
-      {
-        role: 'user',
-        content: [
-          {
-            type: 'document',
-            source: {
-              type: 'base64',
-              media_type: 'application/pdf',
-              data: buffer.toString('base64'),
-            },
-          } as Parameters<typeof client.messages.create>[0]['messages'][0]['content'][0],
-          {
-            type: 'text',
-            text: 'استخرج كل النص الموجود في هذا المستند كما هو بالضبط، بدون أي تعليق أو تفسير. فقط النص الخام.',
-          },
-        ],
-      },
-    ],
+    messages: [userMessage],
   })
 
   const content = message.content[0]
