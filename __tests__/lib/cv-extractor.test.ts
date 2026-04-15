@@ -2,8 +2,17 @@
  * @jest-environment node
  */
 
-// pdfjs-dist is mapped to __mocks__/pdfjs-dist.js via jest.config.ts moduleNameMapper
-const mockPdfJs = require('pdfjs-dist/legacy/build/pdf.mjs')
+// Must be declared with var so jest.mock hoisting can access it
+// eslint-disable-next-line no-var
+var mockCreate: jest.Mock
+
+jest.mock('@anthropic-ai/sdk', () => {
+  mockCreate = jest.fn()
+  const AnthropicMock = jest.fn().mockImplementation(() => ({
+    messages: { create: mockCreate },
+  }))
+  return { default: AnthropicMock, __esModule: true }
+})
 jest.mock('mammoth', () => ({ extractRawText: jest.fn() }))
 
 import mammoth from 'mammoth'
@@ -17,36 +26,35 @@ const PDF_MIME = 'application/pdf' as const
 const DOCX_MIME =
   'application/vnd.openxmlformats-officedocument.wordprocessingml.document' as const
 
-function makePdfDocMock(pages: string[]) {
-  return {
-    promise: Promise.resolve({
-      numPages: pages.length,
-      getPage: jest.fn().mockImplementation(async (i: number) => ({
-        getTextContent: async () => ({
-          items: pages[i - 1].split(' ').map((str: string) => ({ str })),
-        }),
-      })),
-    }),
-  }
-}
-
 describe('extractTextFromBuffer', () => {
   beforeEach(() => jest.clearAllMocks())
 
-  it('extracts text from PDF buffer using pdfjs-dist', async () => {
-    mockPdfJs.getDocument.mockReturnValue(makePdfDocMock(['Ahmed Ali Software Engineer']))
+  it('extracts text from PDF using Claude document API', async () => {
+    mockCreate.mockResolvedValue({
+      content: [{ type: 'text', text: 'Ahmed Ali — Software Engineer' }],
+    })
 
     const buf = Buffer.from('fake pdf bytes')
     const result = await extractTextFromBuffer(buf, PDF_MIME)
 
-    expect(result).toBe('Ahmed Ali Software Engineer')
-    expect(mockPdfJs.getDocument).toHaveBeenCalledWith(
-      expect.objectContaining({ data: expect.any(Uint8Array) })
+    expect(result).toBe('Ahmed Ali — Software Engineer')
+    expect(mockCreate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        messages: expect.arrayContaining([
+          expect.objectContaining({
+            content: expect.arrayContaining([
+              expect.objectContaining({ type: 'document' }),
+            ]),
+          }),
+        ]),
+      })
     )
   })
 
-  it('extracts Arabic text from multi-page PDF', async () => {
-    mockPdfJs.getDocument.mockReturnValue(makePdfDocMock(['أحمد علي', 'مهندس برمجيات']))
+  it('extracts Arabic text from PDF', async () => {
+    mockCreate.mockResolvedValue({
+      content: [{ type: 'text', text: 'أحمد علي\nمهندس برمجيات\nالرياض' }],
+    })
 
     const buf = Buffer.from('arabic pdf')
     const result = await extractTextFromBuffer(buf, PDF_MIME)
@@ -55,20 +63,32 @@ describe('extractTextFromBuffer', () => {
     expect(result).toContain('مهندس برمجيات')
   })
 
-  it('extracts text from DOCX buffer', async () => {
+  it('extracts text from DOCX buffer using mammoth', async () => {
     mockMammothExtract.mockResolvedValue({ value: 'Ahmed Ali — Software Engineer', messages: [] })
     const buf = Buffer.from('fake docx bytes')
     const result = await extractTextFromBuffer(buf, DOCX_MIME)
     expect(result).toBe('Ahmed Ali — Software Engineer')
     expect(mockMammothExtract).toHaveBeenCalledWith({ buffer: buf })
+    expect(mockCreate).not.toHaveBeenCalled()
   })
 
-  it('throws on empty extracted text', async () => {
-    mockPdfJs.getDocument.mockReturnValue(makePdfDocMock(['   ']))
+  it('throws on empty extracted text from PDF', async () => {
+    mockCreate.mockResolvedValue({
+      content: [{ type: 'text', text: '   ' }],
+    })
 
     const buf = Buffer.from('empty')
     await expect(extractTextFromBuffer(buf, PDF_MIME)).rejects.toThrow(
       'لم يتم العثور على نص في الملف'
     )
+  })
+
+  it('throws when Claude returns non-text content', async () => {
+    mockCreate.mockResolvedValue({
+      content: [{ type: 'tool_use', id: 'x', name: 'x', input: {} }],
+    })
+
+    const buf = Buffer.from('bad pdf')
+    await expect(extractTextFromBuffer(buf, PDF_MIME)).rejects.toThrow()
   })
 })

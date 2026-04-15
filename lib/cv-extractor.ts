@@ -1,35 +1,45 @@
 import 'server-only'
+import Anthropic from '@anthropic-ai/sdk'
 import mammoth from 'mammoth'
 
 export type SupportedMimeType =
   | 'application/pdf'
   | 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
 
+const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
+
+/**
+ * Extract text from a PDF buffer using Claude's native document understanding.
+ * This handles Arabic, English, and mixed-language PDFs without any PDF parsing library.
+ */
 async function extractFromPDF(buffer: Buffer): Promise<string> {
-  // pdfjs-dist/legacy has proper Arabic/Unicode support unlike pdf-parse
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const { getDocument } = require('pdfjs-dist/legacy/build/pdf.mjs')
+  const message = await client.messages.create({
+    model: 'claude-haiku-4-5-20251001',
+    max_tokens: 4000,
+    messages: [
+      {
+        role: 'user',
+        content: [
+          {
+            type: 'document',
+            source: {
+              type: 'base64',
+              media_type: 'application/pdf',
+              data: buffer.toString('base64'),
+            },
+          } as Parameters<typeof client.messages.create>[0]['messages'][0]['content'][0],
+          {
+            type: 'text',
+            text: 'استخرج كل النص الموجود في هذا المستند كما هو بالضبط، بدون أي تعليق أو تفسير. فقط النص الخام.',
+          },
+        ],
+      },
+    ],
+  })
 
-  const doc = await getDocument({
-    data: new Uint8Array(buffer),
-    useSystemFonts: true,
-    // Disable workers — not available in Node.js server environment
-    disableWorker: true,
-  }).promise
-
-  const pageTexts: string[] = []
-
-  for (let i = 1; i <= doc.numPages; i++) {
-    const page = await doc.getPage(i)
-    const content = await page.getTextContent()
-    // Join items preserving order; add newline between blocks
-    const pageText = content.items
-      .map((item: { str?: string }) => item.str ?? '')
-      .join(' ')
-    pageTexts.push(pageText)
-  }
-
-  return pageTexts.join('\n').trim()
+  const content = message.content[0]
+  if (content.type !== 'text') throw new Error('Unexpected response from Claude')
+  return content.text.trim()
 }
 
 export async function extractTextFromBuffer(
