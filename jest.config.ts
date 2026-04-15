@@ -8,6 +8,7 @@ const config: Config = {
   setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/$1',
+    '^pdfjs-dist/legacy/build/pdf\\.mjs$': '<rootDir>/__mocks__/pdfjs-dist.js',
   },
 }
 

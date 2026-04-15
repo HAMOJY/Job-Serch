@@ -7,13 +7,13 @@ export type SupportedMimeType =
 
 async function extractFromPDF(buffer: Buffer): Promise<string> {
   // pdfjs-dist/legacy has proper Arabic/Unicode support unlike pdf-parse
-  const { getDocument } = await import('pdfjs-dist/legacy/build/pdf.mjs' as string)
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const { getDocument } = require('pdfjs-dist/legacy/build/pdf.mjs')
 
   const doc = await getDocument({
     data: new Uint8Array(buffer),
     useSystemFonts: true,
     // Disable workers — not available in Node.js server environment
-    // @ts-expect-error — disableAutoFetch not in types but works at runtime
     disableWorker: true,
   }).promise
 

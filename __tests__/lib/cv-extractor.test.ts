@@ -2,11 +2,8 @@
  * @jest-environment node
  */
 
-const mockGetDocument = jest.fn()
-
-jest.mock('pdfjs-dist/legacy/build/pdf.mjs', () => ({
-  getDocument: mockGetDocument,
-}))
+// pdfjs-dist is mapped to __mocks__/pdfjs-dist.js via jest.config.ts moduleNameMapper
+const mockPdfJs = require('pdfjs-dist/legacy/build/pdf.mjs')
 jest.mock('mammoth', () => ({ extractRawText: jest.fn() }))
 
 import mammoth from 'mammoth'
@@ -37,19 +34,19 @@ describe('extractTextFromBuffer', () => {
   beforeEach(() => jest.clearAllMocks())
 
   it('extracts text from PDF buffer using pdfjs-dist', async () => {
-    mockGetDocument.mockReturnValue(makePdfDocMock(['Ahmed Ali Software Engineer']))
+    mockPdfJs.getDocument.mockReturnValue(makePdfDocMock(['Ahmed Ali Software Engineer']))
 
     const buf = Buffer.from('fake pdf bytes')
     const result = await extractTextFromBuffer(buf, PDF_MIME)
 
     expect(result).toBe('Ahmed Ali Software Engineer')
-    expect(mockGetDocument).toHaveBeenCalledWith(
+    expect(mockPdfJs.getDocument).toHaveBeenCalledWith(
       expect.objectContaining({ data: expect.any(Uint8Array) })
     )
   })
 
   it('extracts Arabic text from multi-page PDF', async () => {
-    mockGetDocument.mockReturnValue(makePdfDocMock(['أحمد علي', 'مهندس برمجيات']))
+    mockPdfJs.getDocument.mockReturnValue(makePdfDocMock(['أحمد علي', 'مهندس برمجيات']))
 
     const buf = Buffer.from('arabic pdf')
     const result = await extractTextFromBuffer(buf, PDF_MIME)
@@ -67,7 +64,7 @@ describe('extractTextFromBuffer', () => {
   })
 
   it('throws on empty extracted text', async () => {
-    mockGetDocument.mockReturnValue(makePdfDocMock(['   ']))
+    mockPdfJs.getDocument.mockReturnValue(makePdfDocMock(['   ']))
 
     const buf = Buffer.from('empty')
     await expect(extractTextFromBuffer(buf, PDF_MIME)).rejects.toThrow(
